@@ -62,14 +62,6 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ALLOWED_ORIGINS = [
-    'https://a386-103-132-151-85.ngrok-free.app',
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://a386-103-132-151-85.ngrok-free.app',
-]
-
 ROOT_URLCONF = 'BlueDive_DRF_Backend.urls'
 
 TEMPLATES = [
