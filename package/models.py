@@ -1,62 +1,54 @@
 from django.db import models
 
-class BreakFastOption(models.Model):
+class Option(models.Model):
     name = models.CharField(max_length=200)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.BooleanField(default=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    description = models.CharField(max_length=200)
+    event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='options', null=True, blank=True)
 
     def __str__(self):
         return self.name
 
-class LunchOption(models.Model):
+class Event(models.Model):
     name = models.CharField(max_length=200)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.BooleanField(default=True)
+    standard_option = models.CharField(max_length=200)
+    description = models.TextField()
+    compulsory = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
-class DinnerOption(models.Model):
+class Day(models.Model):
     name = models.CharField(max_length=200)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.BooleanField(default=True)
+    description = models.TextField()
+    number = models.IntegerField()
 
     def __str__(self):
-        return self.name
+        return str(self.number)
 
-class RoomSharingOption(models.Model):
-    name = models.CharField(max_length=200)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    status = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.name
-
-class WaterSportOption(models.Model):
-    name = models.CharField(max_length=200)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.BooleanField(default=True)
+class EventRecord(models.Model):
+    number = models.IntegerField()
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='event_records')
+    day = models.ForeignKey(Day, on_delete=models.CASCADE, related_name='event_records')
 
     def __str__(self):
-        return self.name
+        return f"EventRecord {self.number} for Event {self.event.name} on Day {self.day.number}"
+
+class DayRecord(models.Model):
+    number = models.IntegerField()
+    day = models.ForeignKey(Day, on_delete=models.CASCADE, related_name='day_records')
+    package = models.ForeignKey('Package', on_delete=models.CASCADE, related_name='day_records')
+
+    def __str__(self):
+        return f"DayRecord {self.number} for Day {self.day.number}"
 
 class Package(models.Model):
     name = models.CharField(max_length=200)
-    display_price = models.DecimalField(max_digits=10, decimal_places=2)
-    duration = models.DurationField()
-    breakfast_options = models.ManyToManyField('BreakFastOption', related_name='packages')
-    lunch_options = models.ManyToManyField('LunchOption', related_name='packages')
-    dinner_options = models.ManyToManyField('DinnerOption', related_name='packages')
-    room_sharing_options = models.ManyToManyField('RoomSharingOption', related_name='packages')
-    water_sport_options = models.ManyToManyField('WaterSportOption', related_name='packages')
-
-    def __str__(self):
-        return self.name
-    
-class Amenity(models.Model):
-    name = models.CharField(max_length=200)
-    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='amenities')
+    duration = models.CharField(max_length=200)
+    description = models.TextField(null=True, blank=True)
+    pax_4_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pax_3_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pax_2_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
         return self.name
