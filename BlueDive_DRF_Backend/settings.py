@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
+    "nested_admin",
 
     "booking",
     "package",
@@ -146,3 +147,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
+
+TWILIO_ACCOUNT_SID = 'AC35b04c7c301fafe0ab317b33d5519dd4'
+TWILIO_AUTH_TOKEN = 'f559586089a07a0fc6ea1b42fa71f68c'
+TWILIO_PHONE_NUMBER = '+19388391796'
+TWILIO_VERIFY_SERVICE_SID = 'VA75cf3447ad1a1692f82940dbe6184df1'

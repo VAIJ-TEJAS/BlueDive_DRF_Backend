@@ -46,16 +46,25 @@ class DayRecord(models.Model):
     def __str__(self):
         return f"DayRecord for {self.day}"
 
+class Meal(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
 class PaxOptions(models.Model):
     pax = models.IntegerField()
     discount = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    pure_veg_meals_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    pure_veg_meals_discounted_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    mix_veg_nonveg_meals_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    mix_veg_nonveg_meals_discounted_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    nonveg_meals_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    nonveg_meals_discounted_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='pax_options', null=True, blank=True)
 
     def __str__(self):
         return f"PaxOptions for Package {self.package.name if self.package else 'No Package'}"
+
+class MealRecords(models.Model):
+    pax_option = models.ForeignKey(PaxOptions, on_delete=models.CASCADE, related_name='meal_records')
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name='meal_records')
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    discounted_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    def __str__(self):
+        return f"MealRecord for {self.meal.name} in PaxOption {self.pax_option.id}"

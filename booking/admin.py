@@ -1,11 +1,24 @@
+import nested_admin
 from django.contrib import admin
-from .models import Booking
-from django.contrib.auth.models import User
+from .models import Booking, PaxRecord, CustomerDetail, Payment
 
-class BookingAdmin(admin.ModelAdmin):
-    list_display = ('user', 'trip', 'advance_payment', 'complete_payment', 'booking_date', 'status')
-    list_filter = ('trip', 'status', 'booking_date')
+class CustomerDetailInline(nested_admin.NestedStackedInline):
+    model = CustomerDetail
+    extra = 1  
+
+class PaymentInline(nested_admin.NestedStackedInline):
+    model = Payment
+    extra = 1  
+
+class PaxRecordInline(nested_admin.NestedStackedInline):
+    model = PaxRecord
+    extra = 1  
+    inlines = [CustomerDetailInline] 
+
+class BookingAdmin(nested_admin.NestedModelAdmin):
+    list_display = ('user', 'trip', 'booking_date', 'status', 'scuba_included')
     search_fields = ('user__username', 'trip__package__name')
-    readonly_fields = ('booking_date',)
+    list_filter = ('status', 'booking_date')
+    inlines = [PaxRecordInline, PaymentInline]
 
 admin.site.register(Booking, BookingAdmin)
