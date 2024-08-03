@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Option, Event, Day, EventRecord, DayRecord, Package
+from .models import Option, Event, Day, EventRecord, DayRecord, Package, PaxOptions
 
 class OptionInline(admin.TabularInline):
     model = Option
@@ -23,9 +23,13 @@ class EventRecordInline(admin.TabularInline):
     model = EventRecord
     extra = 1
 
+class PaxOptionsInline(admin.StackedInline):  
+    model = PaxOptions
+    extra = 1
+
 class DayAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
-    inlines = [EventRecordInline]  # Add the inline here
+    inlines = [EventRecordInline]  
 
 class EventRecordAdmin(admin.ModelAdmin):
     list_display = ('event', 'day')
@@ -38,8 +42,8 @@ class DayRecordAdmin(admin.ModelAdmin):
     search_fields = ('day__name', 'package__name')
 
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ('name', 'duration', 'description', 'pax_4_price', 'pax_3_price', 'pax_2_price')
-    inlines = [DayRecordInline]
+    list_display = ('name', 'duration', 'description')
+    inlines = [DayRecordInline, PaxOptionsInline]
     search_fields = ('name', 'description')
 
 admin.site.register(Event, EventAdmin)
