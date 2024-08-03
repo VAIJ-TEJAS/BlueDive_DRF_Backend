@@ -7,22 +7,24 @@ class Package(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 class Day(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
+    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='days', null=True, blank=True)
 
     def __str__(self):
-        return str(self.name)
+        return f"{self.name} in Package {self.package.name if self.package else 'No Package'}"
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
     standard_option = models.CharField(max_length=200, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='events', null=True, blank=True)
 
     def __str__(self):
-        return self.name
-    
+        return f"{self.name} in Package {self.package.name if self.package else 'No Package'}"
+
 class Option(models.Model):
     name = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)

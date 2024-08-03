@@ -9,11 +9,6 @@ from booking import views as booking_views
 from user import views as user_views 
 
 router = DefaultRouter()
-router.register(r'options', package_views.OptionViewSet)
-router.register(r'events', package_views.EventViewSet)
-router.register(r'days', package_views.DayViewSet)
-router.register(r'event_records', package_views.EventRecordViewSet)
-router.register(r'day_records', package_views.DayRecordViewSet)
 router.register(r'packages', package_views.PackageViewSet)
 router.register(r'trips', trip_views.TripViewSet)
 router.register(r'bookings', booking_views.BookingViewSet)  
