@@ -83,8 +83,8 @@ class PackageSerializer(serializers.ModelSerializer):
     meals = MealSerializer(many=True, read_only=True)
     pax_options = PaxOptionsSerializer(many=True, read_only=True)
     meal_records = MealRecordsSerializer(many=True, read_only=True)
-    vehicles = VehicleSerializer(many=True, read_only=True)
-    accommodations = AccommodationSerializer(many=True, read_only=True)
+    vehicle = VehicleSerializer(read_only=True)
+    accommodation = AccommodationSerializer(read_only=True)
 
     class Meta:
         model = Package
