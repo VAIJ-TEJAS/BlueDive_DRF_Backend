@@ -1,13 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from twilio.rest import Client
 from django.conf import settings
 
 class SendOtpView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         phone_number = request.data.get('phone')
 
@@ -24,6 +26,8 @@ class SendOtpView(APIView):
             return Response({'error': 'Failed to send OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
 class VerifyOtpView(APIView):
+    permission_classes = [AllowAny]
+    
     def post(self, request):
         phone_number = request.data.get('phone')
         entered_otp = request.data.get('otp')
