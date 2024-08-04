@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Meal, MealRecords, Option, Event, Day, EventRecord, DayRecord, Package, PaxOptions
+from .models import Meal, MealRecords, Option, Event, Day, EventRecord, DayRecord, Package, PaxOptions, Vehicle, VehicleImage, Accommodation, AccommodationImage
 import nested_admin
 
 class OptionInline(admin.TabularInline):
@@ -29,6 +29,29 @@ class PaxOptionsInline(nested_admin.NestedTabularInline):
     extra = 1
     inlines = [MealRecordsInline]
 
+class VehicleImageInline(nested_admin.NestedTabularInline):
+    model = VehicleImage
+    extra = 1
+
+class VehicleInline(nested_admin.NestedTabularInline):
+    model = Vehicle
+    extra = 1
+    inlines = [VehicleImageInline]
+
+class AccommodationImageInline(nested_admin.NestedTabularInline):
+    model = AccommodationImage
+    extra = 1
+
+class AccommodationInline(nested_admin.NestedTabularInline):
+    model = Accommodation
+    extra = 1
+    inlines = [AccommodationImageInline]
+
+class PackageAdmin(nested_admin.NestedModelAdmin):
+    list_display = ('name', 'duration', 'description')
+    search_fields = ('name', 'description')
+    inlines = [DayRecordInline, PaxOptionsInline, VehicleInline, AccommodationInline]
+
 class OptionAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'event')
     list_filter = ('event',)
@@ -48,15 +71,7 @@ class DayRecordAdmin(admin.ModelAdmin):
     list_filter = ('day', 'package')
     search_fields = ('day__name', 'package__name')
 
-class PackageAdmin(nested_admin.NestedModelAdmin):
-    list_display = ('name', 'duration', 'description')
-    search_fields = ('name', 'description')
-    inlines = [DayRecordInline, PaxOptionsInline]
-
 admin.site.register(Event, EventAdmin)
-# admin.site.register(Option, OptionAdmin)
 admin.site.register(Day, DayAdmin)
-# admin.site.register(EventRecord, EventRecordAdmin)
-# admin.site.register(DayRecord, DayRecordAdmin)
 admin.site.register(Package, PackageAdmin)
 admin.site.register(Meal)
