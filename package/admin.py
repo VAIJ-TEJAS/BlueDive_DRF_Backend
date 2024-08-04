@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Meal, MealRecords, Option, Event, Day, EventRecord, DayRecord, Package, PaxOptions, Vehicle, VehicleImage, Accommodation, AccommodationImage
+from .models import (
+    Meal, MealRecords, Option, Event, Day, EventRecord, 
+    DayRecord, Package, PaxOptions, Vehicle, VehicleImage, 
+    Accommodation, AccommodationImage
+)
 import nested_admin
 
 class OptionInline(admin.TabularInline):
@@ -24,33 +28,23 @@ class MealRecordsInline(nested_admin.NestedTabularInline):
     extra = 1
     fields = ('meal', 'price', 'discounted_price')
 
-class PaxOptionsInline(nested_admin.NestedTabularInline):  
+class PaxOptionsInline(nested_admin.NestedTabularInline):
     model = PaxOptions
     extra = 1
     inlines = [MealRecordsInline]
 
-class VehicleImageInline(nested_admin.NestedTabularInline):
-    model = VehicleImage
-    extra = 1
-
 class VehicleInline(nested_admin.NestedTabularInline):
     model = Vehicle
-    extra = 1
-    inlines = [VehicleImageInline]
-
-class AccommodationImageInline(nested_admin.NestedTabularInline):
-    model = AccommodationImage
     extra = 1
 
 class AccommodationInline(nested_admin.NestedTabularInline):
     model = Accommodation
     extra = 1
-    inlines = [AccommodationImageInline]
 
 class PackageAdmin(nested_admin.NestedModelAdmin):
-    list_display = ('name', 'duration', 'description')
-    search_fields = ('name', 'description')
-    inlines = [DayRecordInline, PaxOptionsInline, VehicleInline, AccommodationInline]
+    list_display = ('name', 'duration', 'description', 'accommodation', 'vehicle')
+    search_fields = ('name', 'description', 'accommodation__name', 'vehicle__name')
+    inlines = [DayRecordInline, PaxOptionsInline]
 
 class OptionAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'event')
@@ -71,7 +65,28 @@ class DayRecordAdmin(admin.ModelAdmin):
     list_filter = ('day', 'package')
     search_fields = ('day__name', 'package__name')
 
+class VehicleImageInline(admin.TabularInline):
+    model = VehicleImage
+    extra = 1
+
+class VehicleAdmin(admin.ModelAdmin):
+    list_display = ('name', 'details')
+    inlines = [VehicleImageInline]
+
+class AccommodationImageInline(admin.TabularInline):
+    model = AccommodationImage
+    extra = 1
+
+class AccommodationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'details')
+    inlines = [AccommodationImageInline]
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Day, DayAdmin)
 admin.site.register(Package, PackageAdmin)
 admin.site.register(Meal)
+# admin.site.register(Option, OptionAdmin)
+# admin.site.register(EventRecord, EventRecordAdmin)
+# admin.site.register(DayRecord, DayRecordAdmin)
+admin.site.register(Vehicle, VehicleAdmin)
+admin.site.register(Accommodation, AccommodationAdmin)

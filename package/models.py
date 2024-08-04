@@ -1,10 +1,26 @@
 from django.db import models
 
+class Accommodation(models.Model):
+    name = models.CharField(max_length=200)
+    details = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class Vehicle(models.Model):
+    name = models.CharField(max_length=200)
+    details = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
 class Package(models.Model):
     code = models.CharField(max_length=100, null=True, blank=True)
     name = models.CharField(max_length=200)
     duration = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
+    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE, related_name='packages', null=True, blank=True)
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='packages', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -72,14 +88,6 @@ class MealRecords(models.Model):
     def __str__(self):
         return f"MealRecord for {self.meal.name} in PaxOption {self.pax_option.id}"
 
-class Vehicle(models.Model):
-    name = models.CharField(max_length=200)
-    details = models.TextField(null=True, blank=True)
-    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='vehicles', null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
 class VehicleImage(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='vehicle_images/')
@@ -87,18 +95,9 @@ class VehicleImage(models.Model):
     def __str__(self):
         return f"Image for {self.vehicle.name}"
 
-class Accommodation(models.Model):
-    name = models.CharField(max_length=200)
-    details = models.TextField(null=True, blank=True)
-    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='accommodations', null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
 class AccommodationImage(models.Model):
     accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='accommodation_images/')
 
     def __str__(self):
         return f"Image for {self.accommodation.name}"
-    
