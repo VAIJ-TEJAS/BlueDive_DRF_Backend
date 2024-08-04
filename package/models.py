@@ -1,6 +1,7 @@
 from django.db import models
 
 class Package(models.Model):
+    code = models.CharField(max_length=100, null=True, blank=True)
     name = models.CharField(max_length=200)
     duration = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
@@ -23,7 +24,7 @@ class Event(models.Model):
     package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='events', null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name} in Package {self.package.name if self.package else 'No Package'}"
+        return f"Standard Option: {self.standard_option if self.standard_option else 'None'} - {self.name} in Package {self.package.code if self.package else 'No Package Code'}"
 
 class Option(models.Model):
     name = models.CharField(max_length=200)
