@@ -10,6 +10,7 @@ class PackageViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['name']
+    search_fields = ['name'] 
 
 class PackageOverviewViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Package.objects.all()
