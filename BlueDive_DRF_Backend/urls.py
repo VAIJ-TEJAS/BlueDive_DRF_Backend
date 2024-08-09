@@ -10,6 +10,7 @@ from user import views as user_views
 
 router = DefaultRouter()
 router.register(r'packages-overview', package_views.PackageOverviewViewSet, basename='packages-overview')
+router.register(r'packages-trips', package_views.PackageTripsViewSet, basename='packages-trips')
 router.register(r'packages', package_views.PackageViewSet,  basename='packages')
 router.register(r'trips', trip_views.TripViewSet,  basename='trips')
 router.register(r'bookings', booking_views.BookingViewSet,  basename='bookings')  

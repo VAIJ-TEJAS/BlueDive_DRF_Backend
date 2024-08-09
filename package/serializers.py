@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from trip.serializers import TripSerializer
 from .models import (
     Option, Event, Day, EventRecord, DayRecord, Package,
     Meal, PaxOptions, MealRecords, Vehicle, VehicleImage,
@@ -91,6 +93,12 @@ class PackageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PackageOverviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Package
+        fields = '__all__'
+
+class PackageTripsSerializer(serializers.ModelSerializer):
+    trips = TripSerializer(many=True, read_only=True)
     class Meta:
         model = Package
         fields = '__all__'

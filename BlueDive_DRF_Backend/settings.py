@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "nested_admin",
-    "django_filters",
 
     "booking",
     "package",
