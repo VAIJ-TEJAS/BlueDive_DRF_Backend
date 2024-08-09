@@ -21,6 +21,7 @@ class Package(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
     display_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  
+    display_discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE, related_name='packages', null=True, blank=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='packages', null=True, blank=True)
 
