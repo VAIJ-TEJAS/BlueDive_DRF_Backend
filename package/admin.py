@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Meal, MealRecords, Option, Event, Day, EventRecord, 
-    DayRecord, Package, PaxOptions, Vehicle, VehicleImage, 
+    DayRecord, Package, PackageImages, PaxOptions, Vehicle, VehicleImage, 
     Accommodation, AccommodationImage
 )
 import nested_admin
@@ -41,10 +41,14 @@ class AccommodationInline(nested_admin.NestedTabularInline):
     model = Accommodation
     extra = 1
 
+class PackageImagesInline(nested_admin.NestedTabularInline):
+    model = PackageImages
+    extra = 1
+
 class PackageAdmin(nested_admin.NestedModelAdmin):
     list_display = ('name', 'duration', 'description', 'accommodation', 'vehicle')
     search_fields = ('name', 'description', 'accommodation__name', 'vehicle__name')
-    inlines = [DayRecordInline, PaxOptionsInline]
+    inlines = [PackageImagesInline, DayRecordInline, PaxOptionsInline]
 
 class OptionAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'event')

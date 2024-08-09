@@ -16,9 +16,11 @@ class Vehicle(models.Model):
 
 class Package(models.Model):
     code = models.CharField(max_length=100, null=True, blank=True)
-    name = models.CharField(max_length=200)
+    cover_image = models.ImageField(upload_to='package_cover_images/', null=True, blank=True)
     duration = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
+    display_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  
     accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE, related_name='packages', null=True, blank=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='packages', null=True, blank=True)
 
@@ -101,3 +103,10 @@ class AccommodationImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.accommodation.name}"
+
+class PackageImages(models.Model):
+    package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='package_images/')
+
+    def __str__(self):
+        return f"Image for Package {self.package.name}"
