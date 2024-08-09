@@ -17,8 +17,8 @@ class Vehicle(models.Model):
 class Package(models.Model):
     code = models.CharField(max_length=100, null=True, blank=True)
     cover_image = models.ImageField(upload_to='package_cover_images/', null=True, blank=True)
-    duration = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
+    duration = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
     display_price = models.IntegerField(null=True, blank=True)  
     display_discount_percentage = models.IntegerField(null=True, blank=True)
