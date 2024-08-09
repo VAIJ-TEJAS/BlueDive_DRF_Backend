@@ -89,3 +89,8 @@ class PackageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Package
         fields = '__all__'
+
+class PackageOverviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Package
+        fields = '__all__'
