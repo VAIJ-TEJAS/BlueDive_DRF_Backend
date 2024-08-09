@@ -3,7 +3,7 @@ from rest_framework import serializers
 from trip.serializers import TripSerializer
 from .models import (
     Option, Event, Day, EventRecord, DayRecord, Package,
-    Meal, PaxOptions, MealRecords, Vehicle, VehicleImage,
+    Meal, PackageImages, PaxOptions, MealRecords, Vehicle, VehicleImage,
     Accommodation, AccommodationImage
 )
 
@@ -80,6 +80,11 @@ class AccommodationSerializer(serializers.ModelSerializer):
         model = Accommodation
         fields = '__all__'
 
+class PackageImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PackageImages
+        fields = '__all__'
+
 class PackageSerializer(serializers.ModelSerializer):
     day_records = DayRecordSerializer(many=True, read_only=True)
     meals = MealSerializer(many=True, read_only=True)
@@ -87,6 +92,7 @@ class PackageSerializer(serializers.ModelSerializer):
     meal_records = MealRecordsSerializer(many=True, read_only=True)
     vehicle = VehicleSerializer(read_only=True)
     accommodation = AccommodationSerializer(read_only=True)
+    images = PackageImagesSerializer(many=True, read_only=True)
 
     class Meta:
         model = Package
@@ -105,6 +111,7 @@ class PackageTripsSerializer(serializers.ModelSerializer):
     meal_records = MealRecordsSerializer(many=True, read_only=True)
     vehicle = VehicleSerializer(read_only=True)
     accommodation = AccommodationSerializer(read_only=True)
+    images = PackageImagesSerializer(many=True, read_only=True)
     
     class Meta:
         model = Package
