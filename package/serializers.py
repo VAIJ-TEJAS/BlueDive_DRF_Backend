@@ -99,6 +99,13 @@ class PackageOverviewSerializer(serializers.ModelSerializer):
 
 class PackageTripsSerializer(serializers.ModelSerializer):
     trips = TripSerializer(many=True, read_only=True)
+    day_records = DayRecordSerializer(many=True, read_only=True)
+    meals = MealSerializer(many=True, read_only=True)
+    pax_options = PaxOptionsSerializer(many=True, read_only=True)
+    meal_records = MealRecordsSerializer(many=True, read_only=True)
+    vehicle = VehicleSerializer(read_only=True)
+    accommodation = AccommodationSerializer(read_only=True)
+    
     class Meta:
         model = Package
         fields = '__all__'
