@@ -12,7 +12,7 @@ class BookingInline(admin.TabularInline):
 
     def view_booking_link(self, obj):
         if obj.id:
-            link = reverse('admin:yourapp_booking_change', args=[obj.id])
+            link = reverse('admin:bookings_booking_change', args=[obj.id])
             return format_html('<a href="{}">View Details</a>', link)
         return "No Details Available"
 
