@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Booking, PaxRecord, CustomerDetail, Payment
-from .serializers import BookingSerializer, PaxRecordSerializer, CustomerDetailSerializer, PaymentSerializer
+from .serializers import BookingSerializer
 
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
