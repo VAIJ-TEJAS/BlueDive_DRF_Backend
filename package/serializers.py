@@ -128,6 +128,7 @@ class PackageTripsSerializer(serializers.ModelSerializer):
     day_records = DayRecordSerializer(many=True, read_only=True)
     meals = MealSerializer(many=True, read_only=True)
     pax_options = PaxOptionsSerializer(many=True, read_only=True)
+    meals = serializers.SerializerMethodField()
     meal_records = MealRecordsSerializer(many=True, read_only=True)
     vehicle = VehicleSerializer(read_only=True)
     accommodation = AccommodationSerializer(read_only=True)
@@ -138,3 +139,8 @@ class PackageTripsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Package
         fields = '__all__'
+
+    def get_meals(self, obj):
+        meal_ids = MealRecords.objects.filter(pax_option__package=obj).values_list('meal_id', flat=True).distinct()
+        meals = Meal.objects.filter(id__in=meal_ids)
+        return MealSerializer(meals, many=True).data
