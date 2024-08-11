@@ -1,8 +1,8 @@
 from django.contrib import admin
 from .models import (
     Meal, MealRecords, Option, Event, Day, EventRecord, 
-    DayRecord, Package, PackageImages, PaxOptions, Vehicle, VehicleImage, 
-    Accommodation, AccommodationImage
+    DayRecord, Package, PackageImages, PaxOptions, PickupPoint, Vehicle, VehicleImage, 
+    Accommodation, AccommodationImage, WaterSportOption
 )
 import nested_admin
 
@@ -85,6 +85,14 @@ class AccommodationAdmin(admin.ModelAdmin):
     list_display = ('name', 'details')
     inlines = [AccommodationImageInline]
 
+class PickupPointAdmin(admin.ModelAdmin):
+    list_display = ('name', 'location')
+    search_fields = ('name', 'location')
+
+class WaterSportOptionAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Day, DayAdmin)
 admin.site.register(Package, PackageAdmin)
@@ -94,3 +102,5 @@ admin.site.register(Meal)
 # admin.site.register(DayRecord, DayRecordAdmin)
 admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(Accommodation, AccommodationAdmin)
+admin.site.register(PickupPoint, PickupPointAdmin)
+admin.site.register(WaterSportOption, WaterSportOptionAdmin)
