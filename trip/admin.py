@@ -7,8 +7,8 @@ from .models import Trip
 class BookingInline(admin.TabularInline):
     model = Booking
     extra = 0
-    readonly_fields = ('view_booking_link',)  # Make the link field readonly
-    fields = ('user', 'trip', 'status', 'view_booking_link')  # Display the link in the inline
+    readonly_fields = ('view_booking_link',) 
+    fields = ('user', 'trip', 'status', 'view_booking_link') 
 
     def view_booking_link(self, obj):
         if obj.id:
