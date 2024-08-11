@@ -46,14 +46,15 @@ class MealSerializer(serializers.ModelSerializer):
         model = Meal
         fields = '__all__'
 
-class PaxOptionsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PaxOptions
-        fields = '__all__'
-
 class MealRecordsSerializer(serializers.ModelSerializer):
     class Meta:
         model = MealRecords
+        fields = '__all__'
+
+class PaxOptionsSerializer(serializers.ModelSerializer):
+    meal_records = MealRecordsSerializer(many=True, read_only=True)
+    class Meta:
+        model = PaxOptions
         fields = '__all__'
 
 class VehicleImageSerializer(serializers.ModelSerializer):
