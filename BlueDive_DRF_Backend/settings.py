@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
     "booking",
     "package",
+    "payment",
     "trip",
     "user"
 ]
