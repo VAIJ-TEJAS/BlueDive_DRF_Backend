@@ -9,6 +9,9 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         booking_data = request.data
+
+         # Extract the user from the request and add it to the booking data
+        booking_data['user'] = request.user.id
         
         # Extract related data from the request
         pax_records_data = booking_data.pop('pax_records', [])
