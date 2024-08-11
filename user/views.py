@@ -46,6 +46,15 @@ class VerifyOtpView(APIView):
             # Create or get token for the user
             token, created = Token.objects.get_or_create(user=user)
 
-            return Response({'user': user, 'token': token.key}, status=status.HTTP_200_OK)
+            # Return relevant user data and the token
+            user_data = {
+                'id': user.id,
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+            }
+
+            return Response({'user': user_data, 'token': token.key}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
