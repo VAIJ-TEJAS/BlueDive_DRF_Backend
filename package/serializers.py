@@ -3,8 +3,8 @@ from rest_framework import serializers
 from trip.serializers import TripSerializer
 from .models import (
     Option, Event, Day, EventRecord, DayRecord, Package,
-    Meal, PackageImages, PaxOptions, MealRecords, Vehicle, VehicleImage,
-    Accommodation, AccommodationImage
+    Meal, PackageImages, PaxOptions, MealRecords, PickupPoint, Vehicle, VehicleImage,
+    Accommodation, AccommodationImage, WaterSportOption
 )
 
 class OptionSerializer(serializers.ModelSerializer):
@@ -87,6 +87,16 @@ class PackageImagesSerializer(serializers.ModelSerializer):
         model = PackageImages
         fields = '__all__'
 
+class PickupPointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PickupPoint
+        fields = '__all__'
+
+class WaterSportOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WaterSportOption
+        fields = '__all__'
+
 class PackageSerializer(serializers.ModelSerializer):
     day_records = DayRecordSerializer(many=True, read_only=True)
     meals = MealSerializer(many=True, read_only=True)
@@ -95,6 +105,8 @@ class PackageSerializer(serializers.ModelSerializer):
     vehicle = VehicleSerializer(read_only=True)
     accommodation = AccommodationSerializer(read_only=True)
     images = PackageImagesSerializer(many=True, read_only=True)
+    pickup_points = PickupPointSerializer(many=True, read_only=True)
+    water_sport_options = WaterSportOptionSerializer(many=True, read_only=True) 
 
     class Meta:
         model = Package
@@ -114,6 +126,8 @@ class PackageTripsSerializer(serializers.ModelSerializer):
     vehicle = VehicleSerializer(read_only=True)
     accommodation = AccommodationSerializer(read_only=True)
     images = PackageImagesSerializer(many=True, read_only=True)
+    pickup_points = PickupPointSerializer(many=True, read_only=True)
+    water_sport_options = WaterSportOptionSerializer(many=True, read_only=True) 
     
     class Meta:
         model = Package
