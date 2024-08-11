@@ -1,5 +1,11 @@
 from django.db import models
 
+class Meal(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
 class Accommodation(models.Model):
     name = models.CharField(max_length=200)
     details = models.TextField(null=True, blank=True)
@@ -35,11 +41,11 @@ class Package(models.Model):
     description = models.TextField(null=True, blank=True)
     display_price = models.IntegerField(null=True, blank=True)  
     display_discount_percentage = models.IntegerField(null=True, blank=True)
-    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE, related_name='packages', null=True, blank=True)
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='packages', null=True, blank=True)
+    accommodation = models.ForeignKey(Accommodation, on_delete=models.SET_NULL, related_name='packages', null=True, blank=True)
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.SET_NULL, related_name='packages', null=True, blank=True)
     pickup_points = models.ManyToManyField(PickupPoint, related_name='packages', blank=True)
     water_sport_options = models.ManyToManyField(WaterSportOption, related_name='packages', blank=True)
-
+    default_meal_option = models.ForeignKey(Meal, on_delete=models.SET_NULL, related_name='default_meal_packages', null=True, blank=True) 
     def __str__(self):
         return self.name
 
@@ -82,12 +88,6 @@ class DayRecord(models.Model):
 
     def __str__(self):
         return f"DayRecord for {self.day}"
-
-class Meal(models.Model):
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
 
 class PaxOptions(models.Model):
     pax = models.IntegerField()
