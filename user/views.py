@@ -53,7 +53,6 @@ class VerifyOtpView(APIView):
                 'username': user.username,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
-                'email': user.email,
             }
 
             return Response({'user': user_data, 'token': token.key}, status=status.HTTP_200_OK)
@@ -68,12 +67,10 @@ class UserViewSet(viewsets.ViewSet):
 
         first_name = request.data.get('first_name', user.first_name)
         last_name = request.data.get('last_name', user.last_name)
-        email = request.data.get('email', user.email)
 
         # Update the user's information
         user.first_name = first_name
         user.last_name = last_name
-        user.email = email
         user.save()
 
         # Return the updated user data and the token
@@ -82,7 +79,6 @@ class UserViewSet(viewsets.ViewSet):
             'username': user.username,
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'email': user.email,
         }
         token, created = Token.objects.get_or_create(user=user)
 
