@@ -14,7 +14,7 @@ router.register(r'packages-trips', package_views.PackageTripsViewSet, basename='
 router.register(r'packages', package_views.PackageViewSet,  basename='packages')
 router.register(r'trips', trip_views.TripViewSet,  basename='trips')
 router.register(r'bookings', booking_views.BookingViewSet,  basename='bookings')  
-router.register(r'user', user_views.UserViewSet, basename='user')
+router.register(r'update-profile', user_views.UserViewSet, basename='update-profile')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
