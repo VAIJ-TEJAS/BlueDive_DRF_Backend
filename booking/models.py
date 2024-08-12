@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from trip.models import Trip
 
 class Booking(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='bookings')
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='bookings')
     advance_payment = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     complete_payment = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
