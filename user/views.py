@@ -83,21 +83,3 @@ class UserViewSet(viewsets.ViewSet):
         token, created = Token.objects.get_or_create(user=user)
 
         return Response({'user': user_data, 'token': token.key}, status=status.HTTP_200_OK)
-    
-
-    @action(detail=False, methods=['post'])
-    def delete_user(self, request):
-        user = request.user
-
-        if not user:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        # Update the username to indicate deletion
-        user.username = f'DELETED_{user.username}'
-        user.save()
-
-        # Delete the token associated with the user
-        Token.objects.filter(user=user).delete()
-
-        # Return a success response
-        return Response({'message': 'User account marked as deleted'}, status=status.HTTP_200_OK)
