@@ -16,6 +16,7 @@ router.register(r'trips', trip_views.TripViewSet,  basename='trips')
 router.register(r'bookings', booking_views.BookingViewSet,  basename='bookings')  
 router.register(r'user', user_views.UserViewSet, basename='user')
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include(router.urls)),
