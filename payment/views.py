@@ -19,8 +19,6 @@ class PaymentViewset(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         pax_records = request.data.get("pax_records", [])
 
-        print(pax_records)
-
         if not pax_records:
             return Response(
                 {"error": "No pax records provided."},
@@ -32,6 +30,9 @@ class PaymentViewset(viewsets.ModelViewSet):
         for pax_record in pax_records:
             for customer_detail in pax_record.get("customer_details", []):
                 meal_option_id = customer_detail.get("meal_option_id")
+
+                print(meal_option_id)
+
                 try:
                     meal_record = MealRecords.objects.get(id=meal_option_id)
                     total_cost += (
