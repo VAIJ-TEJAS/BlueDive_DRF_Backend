@@ -27,7 +27,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
         for pax_record in pax_records:
             for customer_detail in pax_record.get('customer_details', []):
-                meal_option_id = customer_detail.get('meal_option')
+                meal_option_id = customer_detail.get('meal_option_id')
                 try:
                     meal_record = MealRecords.objects.get(id=meal_option_id)
                     total_cost += meal_record.discounted_price if meal_record.discounted_price else meal_record.price
