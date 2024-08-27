@@ -52,8 +52,6 @@ class PaymentViewset(viewsets.ModelViewSet):
         order_receipt = f"receipt_{int(time.time())}"
         notes = {}
 
-        print(order_amount)
-
         razorpay_order = client.order.create(
             dict(
                 amount=order_amount,
@@ -62,6 +60,8 @@ class PaymentViewset(viewsets.ModelViewSet):
                 notes=notes,
             )
         )
+
+        print(razorpay_order)
 
         return Response(
             {
