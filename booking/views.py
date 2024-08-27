@@ -17,7 +17,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], url_name='calculate')
     def calculate_booking(self, request):
         pax_records = request.data.get('pax_records', [])
         if not pax_records:
