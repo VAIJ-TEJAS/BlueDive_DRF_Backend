@@ -31,6 +31,7 @@ class CustomerDetail(models.Model):
     contact_number = models.CharField(max_length=15)
     pick_up_point = models.CharField(max_length=255)
     meal_option = models.CharField(max_length=50)
+    meal_option_id = models.IntegerField(null=True, blank=True)
     watersports_option = models.CharField(max_length=50)
     package_cost = models.DecimalField(max_digits=10, decimal_places=2)
     discounted_package_cost = models.DecimalField(max_digits=10, decimal_places=2)
