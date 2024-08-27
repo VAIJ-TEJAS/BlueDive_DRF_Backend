@@ -31,8 +31,6 @@ class PaymentViewset(viewsets.ModelViewSet):
             for customer_detail in pax_record.get("customer_details", []):
                 meal_option_id = customer_detail.get("meal_option_id")
 
-                print(meal_option_id)
-
                 try:
                     meal_record = MealRecords.objects.get(id=meal_option_id)
                     total_cost += (
@@ -53,6 +51,8 @@ class PaymentViewset(viewsets.ModelViewSet):
         order_currency = "INR"
         order_receipt = f"receipt_{int(time.time())}"
         notes = {}
+
+        print(order_amount)
 
         razorpay_order = client.order.create(
             dict(
