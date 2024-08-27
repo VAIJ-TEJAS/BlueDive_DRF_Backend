@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from trip.serializers import TripSerializer
+from trip.serializers import TripOverviewSerializer
 from .models import (
     Option, Event, Day, EventRecord, DayRecord, Package,
     Meal, PackageImages, PaxOptions, MealRecords, PickupPoint, Vehicle, VehicleImage,
@@ -125,7 +125,7 @@ class PackageOverviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PackageTripsSerializer(serializers.ModelSerializer):
-    trips = TripSerializer(many=True, read_only=True)
+    trips = TripOverviewSerializer(many=True, read_only=True)
     day_records = DayRecordSerializer(many=True, read_only=True)
     meals = MealSerializer(many=True, read_only=True)
     pax_options = PaxOptionsSerializer(many=True, read_only=True)
