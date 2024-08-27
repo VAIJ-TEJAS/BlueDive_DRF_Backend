@@ -1,23 +1,21 @@
 from django.db import transaction
-from rest_framework.decorators import action
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from package.models import MealRecords
 from .models import Booking, PaxRecord, CustomerDetail, Payment
-from .serializers import BookingSerializer
-
-import razorpay
-import time
-import os
-
-client = razorpay.Client(auth=(os.getenv("KEY_ID"), os.getenv("KEY_SECRET")))
-
+from .serializers import BookingOverviewSerializer, BookingSerializer
 
 class BookingViewSet(viewsets.ModelViewSet):
-    queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    
+
+    def get_queryset(self):
+        return Booking.objects.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return BookingOverviewSerializer
+        return BookingSerializer
+
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         booking_data = request.data
