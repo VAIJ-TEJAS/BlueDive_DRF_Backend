@@ -4,15 +4,17 @@ from trip.serializers import TripOverviewSerializer
 from .models import Booking, CustomerDetail, PaxRecord, Payment
 
 
-class PaxRecordSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PaxRecord
-        fields = "__all__"
-
-
 class CustomerDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerDetail
+        fields = "__all__"
+
+
+class PaxRecordSerializer(serializers.ModelSerializer):
+    customer_details = CustomerDetailSerializer(many=True)
+
+    class Meta:
+        model = PaxRecord
         fields = "__all__"
 
 
