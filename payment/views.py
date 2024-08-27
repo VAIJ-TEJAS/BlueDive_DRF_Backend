@@ -9,8 +9,8 @@ import razorpay
 import time
 import os
 
-client = razorpay.Client(auth=("rzp_test_RX98n2GyvgDl78", "mFUsAztsl4YJ2L7OAQJjni20"))
-# client = razorpay.Client(auth=(os.getenv("KEY_ID"), os.getenv("KEY_SECRET")))
+# client = razorpay.Client(auth=("rzp_test_RX98n2GyvgDl78", "mFUsAztsl4YJ2L7OAQJjni20"))
+client = razorpay.Client(auth=(os.getenv("KEY_ID"), os.getenv("KEY_SECRET")))
 
 
 class PaymentViewset(viewsets.ModelViewSet):
