@@ -19,6 +19,10 @@ class PaymentViewset(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         pax_records = request.data.get("pax_records", [])
 
+        print("KEY_ID:", os.getenv("KEY_ID"))
+        print("KEY_SECRET:", os.getenv("KEY_SECRET"))
+
+
         if not pax_records:
             return Response(
                 {"error": "No pax records provided."},
