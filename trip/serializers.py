@@ -11,7 +11,7 @@ class TripPackageOverviewSerializer(serializers.ModelSerializer):
 
 
 class TripOverviewSerializer(serializers.ModelSerializer):
-    package = TripPackageOverviewSerializer()
+    # package = TripPackageOverviewSerializer()
 
     class Meta:
         model = Trip
