@@ -7,6 +7,7 @@ class Trip(models.Model):
         ('Ongoing', 'Ongoing'),
         ('Completed', 'Completed'),
         ('Cancelled', 'Cancelled'),
+        ('Omitted', 'Omitted'),  
     ]
 
     package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='trips')

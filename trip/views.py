@@ -4,6 +4,6 @@ from .models import Trip
 from .serializers import TripOverviewSerializer
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Trip.objects.all()
+    queryset = Trip.objects.filter(status='Scheduled')
     serializer_class = TripOverviewSerializer
     permission_classes = [AllowAny]
