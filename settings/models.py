@@ -22,5 +22,4 @@ class Settings(SingletonModel):
     def __str__(self):
         return f"Settings: Scuba Limit Days = {self.scuba_limit_days}, " \
                f"Discount Limit Days = {self.discount_limit_days}, " \
-               f"No Discount Limit Days = {self.no_discount_limit_days}, " \
                f"Balance Payment Limit Days = {self.balance_payment_limit_days}"
