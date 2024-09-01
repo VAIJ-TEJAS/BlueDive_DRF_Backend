@@ -50,15 +50,15 @@ class BookingViewSet(viewsets.ModelViewSet):
             Payment.objects.create(booking=booking, **payment_data)
 
         # Update available seats in the associated Trip
-        trip = booking.trip
-        if trip.available_seats < total_customers:
-            return Response(
-                {"detail": "Not enough available seats."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # trip = booking.trip
+        # if trip.available_seats < total_customers:
+        #     return Response(
+        #         {"detail": "Not enough available seats."},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
 
-        trip.available_seats -= total_customers
-        trip.save()
+        # trip.available_seats -= total_customers
+        # trip.save()
 
         # Return the full booking with its relationships
         headers = self.get_success_headers(booking_serializer.data)
