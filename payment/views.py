@@ -9,6 +9,7 @@ import razorpay
 import time
 import os
 
+from settings.models import Settings
 from trip.models import Trip
 from trip.serializers import TripOverviewSerializer
 
@@ -23,6 +24,7 @@ class PaymentViewset(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         pax_records = request.data.get("pax_records", [])
         trip_id = request.data.get("trip")
+        payment_type = request.data.get("payment_type")
 
         if not pax_records:
             return Response(
@@ -30,7 +32,6 @@ class PaymentViewset(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        total_cost = 0
 
         # Load the trip object
         try:
@@ -45,24 +46,39 @@ class PaymentViewset(viewsets.ModelViewSet):
         trip_serializer = TripOverviewSerializer(trip)
         is_discount_applicable = trip_serializer.data.get("is_discount_applicable")
 
-        for pax_record in pax_records:
-            for customer_detail in pax_record.get("customer_details", []):
-                meal_option_id = customer_detail.get("meal_option_id")
+        total_cost = 0
 
-                try:
-                    meal_record = MealRecords.objects.get(id=meal_option_id)
+        # Get advance payment amount from settings
+        settings_instance = Settings.load()
+        advance_amount_per_pax = settings_instance.advance_payment_amount
+        
+        if(payment_type == "full"):
+            for pax_record in pax_records:
+                for customer_detail in pax_record.get("customer_details", []):
+                    meal_option_id = customer_detail.get("meal_option_id")
 
-                    # Use discounted price if discount is applicable, otherwise use regular price
-                    if is_discount_applicable and meal_record.discounted_price:
-                        total_cost += meal_record.discounted_price
-                    else:
-                        total_cost += meal_record.price
+                    try:
+                        meal_record = MealRecords.objects.get(id=meal_option_id)
 
-                except MealRecords.DoesNotExist:
-                    return Response(
-                        {"error": f"Meal option with id {meal_option_id} not found."},
-                        status=status.HTTP_404_NOT_FOUND,
-                    )
+                        # Use discounted price if discount is applicable, otherwise use regular price
+                        if is_discount_applicable and meal_record.discounted_price:
+                            total_cost += meal_record.discounted_price
+                        else:
+                            total_cost += meal_record.price
+
+                    except MealRecords.DoesNotExist:
+                        return Response(
+                            {"error": f"Meal option with id {meal_option_id} not found."},
+                            status=status.HTTP_404_NOT_FOUND,
+                        )
+        elif(payment_type == "full"):
+            for pax_record in pax_records:
+                total_cost = pax_record.pax * advance_amount_per_pax
+        else:
+            return Response(
+                {"error": "Invalid payment type provided."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Return the calculated amount in paise (for Razorpay)
         order_amount = total_cost * 100
@@ -80,8 +96,6 @@ class PaymentViewset(viewsets.ModelViewSet):
                 notes=notes,
             )
         )
-
-        print(razorpay_order)
 
         return Response(
             {

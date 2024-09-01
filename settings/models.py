@@ -18,6 +18,7 @@ class Settings(SingletonModel):
     scuba_limit_days = models.IntegerField()
     discount_limit_days = models.IntegerField()
     balance_payment_limit_days = models.IntegerField()
+    advance_payment_amount = models.IntegerField(default=1000)
 
     def __str__(self):
         return f"Settings: Scuba Limit Days = {self.scuba_limit_days}, " \
