@@ -29,7 +29,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         # Extract related data from the request
         pax_records_data = booking_data.pop("pax_records", [])
         payments_data = booking_data.pop("payments", [])
-        trip_id = booking_data.pop("trip", None)
+        trip_id = booking_data.get("trip", None)
 
         # Create the Booking object
         booking_serializer = self.get_serializer(data=booking_data)
