@@ -25,7 +25,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
-    trip = TripOverviewSerializer()
+    trip = TripOverviewSerializer(read_only=True)
     pax_records = PaxRecordSerializer(many=True, read_only=True)
     customer_details = CustomerDetailSerializer(many=True, read_only=True)
     payments = PaymentSerializer(many=True, read_only=True)
@@ -36,7 +36,7 @@ class BookingSerializer(serializers.ModelSerializer):
 
 
 class BookingOverviewSerializer(serializers.ModelSerializer):
-    trip = TripOverviewSerializer()
+    trip = TripOverviewSerializer(read_only=True)
 
     class Meta:
         model = Booking
