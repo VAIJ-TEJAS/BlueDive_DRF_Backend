@@ -50,7 +50,7 @@ class PaymentViewset(viewsets.ModelViewSet):
 
         # Get advance payment amount from settings
         settings_instance = Settings.load()
-        advance_amount_per_pax = settings_instance.advance_payment_amount
+        # advance_amount_per_pax = settings_instance.advance_payment_amount
         
         if(payment_type == "full"):
             for pax_record in pax_records:
@@ -73,7 +73,7 @@ class PaymentViewset(viewsets.ModelViewSet):
                         )
         elif(payment_type == "full"):
             for pax_record in pax_records:
-                total_cost = pax_record.pax * advance_amount_per_pax
+                total_cost = pax_record.pax * 1000
         else:
             return Response(
                 {"error": "Invalid payment type provided."},
