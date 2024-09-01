@@ -71,7 +71,6 @@ class BookingViewSet(viewsets.ModelViewSet):
             Payment.objects.create(booking=booking, **payment_data)
 
         # Update available seats in the associated Trip
-        trip = booking.trip
         if trip.available_seats < total_customers:
             return Response(
                 {"detail": "Not enough available seats."},
