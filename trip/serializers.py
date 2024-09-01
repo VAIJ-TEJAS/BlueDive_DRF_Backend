@@ -1,7 +1,12 @@
 from rest_framework import serializers
+from package.models import Package
 from settings.models import Settings
 from .models import Trip
 from datetime import date, timedelta
+
+class TripPackageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Package
 
 class TripOverviewSerializer(serializers.ModelSerializer):
     is_scuba_free = serializers.SerializerMethodField()
@@ -10,7 +15,7 @@ class TripOverviewSerializer(serializers.ModelSerializer):
     discount_applicable_until_date = serializers.SerializerMethodField()
     can_do_advance_payment = serializers.SerializerMethodField()
     advance_payment_due_date = serializers.SerializerMethodField()
-
+    package = TripPackageSerializer()
     class Meta:
         model = Trip
         fields = "__all__"  # Include all original fields
