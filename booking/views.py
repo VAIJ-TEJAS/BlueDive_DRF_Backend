@@ -29,6 +29,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         # Extract related data from the request
         pax_records_data = booking_data.pop("pax_records", [])
         payments_data = booking_data.pop("payments", [])
+        trip_id = booking_data.pop("trip", None)
 
         # Create the Booking object
         booking_serializer = self.get_serializer(data=booking_data)
@@ -39,7 +40,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
         # Fetch the Trip instance using the trip ID
         try:
-            trip = Trip.objects.get(id=booking.trip) 
+            trip = Trip.objects.get(id=trip_id) 
         except Trip.DoesNotExist:
             return Response(
                 {"detail": "Trip not found."},
