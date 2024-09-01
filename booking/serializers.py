@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from trip.models import Trip
 from trip.serializers import TripOverviewSerializer
 from .models import Booking, CustomerDetail, PaxRecord, Payment
 
@@ -25,7 +26,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
-    trip = TripOverviewSerializer(read_only=True)
+    trip = serializers.PrimaryKeyRelatedField(queryset=Trip.objects.all())
     pax_records = PaxRecordSerializer(many=True, read_only=True)
     customer_details = CustomerDetailSerializer(many=True, read_only=True)
     payments = PaymentSerializer(many=True, read_only=True)
