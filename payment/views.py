@@ -47,41 +47,48 @@ class PaymentViewset(viewsets.ModelViewSet):
         is_discount_applicable = trip_serializer.data.get("is_discount_applicable")
 
         total_cost = 0
+        advance_cost = 0
+        balance_amount = 0
 
         # Get advance payment amount from settings
         settings_instance = Settings.load()
         # advance_amount_per_pax = settings_instance.advance_payment_amount
         
-        if(payment_type == "full"):
-            for pax_record in pax_records:
-                for customer_detail in pax_record.get("customer_details", []):
-                    meal_option_id = customer_detail.get("meal_option_id")
+        for pax_record in pax_records:
+            for customer_detail in pax_record.get("customer_details", []):
+                meal_option_id = customer_detail.get("meal_option_id")
 
-                    try:
-                        meal_record = MealRecords.objects.get(id=meal_option_id)
+                try:
+                    meal_record = MealRecords.objects.get(id=meal_option_id)
 
-                        # Use discounted price if discount is applicable, otherwise use regular price
-                        if is_discount_applicable and meal_record.discounted_price:
-                            total_cost += meal_record.discounted_price
-                        else:
-                            total_cost += meal_record.price
+                    # Use discounted price if discount is applicable, otherwise use regular price
+                    if is_discount_applicable and meal_record.discounted_price:
+                        total_cost += meal_record.discounted_price
+                    else:
+                        total_cost += meal_record.price
 
-                    except MealRecords.DoesNotExist:
-                        return Response(
-                            {"error": f"Meal option with id {meal_option_id} not found."},
-                            status=status.HTTP_404_NOT_FOUND,
-                        )
-        elif(payment_type == "advance"):
-            for pax_record in pax_records:
-                total_cost = pax_record.get('pax') * 1000
+                except MealRecords.DoesNotExist:
+                    return Response(
+                        {"error": f"Meal option with id {meal_option_id} not found."},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
+      
+        for pax_record in pax_records:
+            advance_cost += pax_record.get('pax') * 1000
+        
+
+        # Return the calculated amount in paise (for Razorpay)
+        order_amount = 0
+        if(payment_type == 'advance'):
+            order_amount = advance_cost * 100
+            balance_amount = total_cost - order_amount
+        elif(payment_type == 'full'):
+            order_amount = total_cost * 100 
         else:
             return Response(
                 {"error": "Invalid payment type provided."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        # Return the calculated amount in paise (for Razorpay)
-        order_amount = total_cost * 100
 
         # Create an order with Razorpay
         order_currency = "INR"
@@ -102,6 +109,7 @@ class PaymentViewset(viewsets.ModelViewSet):
                 "order_id": razorpay_order["id"],
                 "razorpay_key_id": os.getenv("KEY_ID"),
                 "amount": order_amount,
+                "balance_amount": balance_amount
             },
             status=status.HTTP_200_OK,
         )
