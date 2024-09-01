@@ -40,7 +40,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
         # Fetch the Trip instance using the trip ID
         try:
-            trip = Trip.objects.get(id=trip_id) 
+            trip = Trip.objects.filter(id=trip_id).first() 
         except Trip.DoesNotExist:
             return Response(
                 {"detail": "Trip not found."},
