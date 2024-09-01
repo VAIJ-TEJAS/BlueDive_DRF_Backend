@@ -109,9 +109,7 @@ class BookingPaymentViewset(viewsets.ModelViewSet):
                 "order_id": razorpay_order["id"],
                 "razorpay_key_id": os.getenv("KEY_ID"),
                 "amount": order_amount,
-                "balance_amount": balance_amount,
-                "total_cost":total_cost,
-                "advance_cost": advance_cost  
+                "balance_amount": balance_amount
             },
             status=status.HTTP_200_OK,
         )
