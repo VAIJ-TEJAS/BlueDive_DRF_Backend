@@ -17,7 +17,7 @@ from trip.serializers import TripOverviewSerializer
 client = razorpay.Client(auth=(os.getenv("KEY_ID"), os.getenv("KEY_SECRET")))
 
 
-class PaymentViewset(viewsets.ModelViewSet):
+class BookingPaymentViewset(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
@@ -81,7 +81,7 @@ class PaymentViewset(viewsets.ModelViewSet):
         order_amount = 0
         if(payment_type == 'advance'):
             order_amount = advance_cost * 100
-            balance_amount = total_cost - order_amount
+            balance_amount = total_cost - advance_cost
         elif(payment_type == 'full'):
             order_amount = total_cost * 100 
         else:
