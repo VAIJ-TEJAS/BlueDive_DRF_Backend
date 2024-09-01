@@ -73,7 +73,7 @@ class PaymentViewset(viewsets.ModelViewSet):
                         )
         elif(payment_type == "advance"):
             for pax_record in pax_records:
-                total_cost = pax_record.pax * 1000
+                total_cost = pax_record.get('pax') * 1000
         else:
             return Response(
                 {"error": "Invalid payment type provided."},
