@@ -3,6 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from datetime import date, timedelta
 from settings.models import Settings
+from trip.models import Trip
 
 from .models import Booking, PaxRecord, CustomerDetail, Payment
 from .serializers import BookingOverviewSerializer, BookingSerializer
@@ -36,9 +37,17 @@ class BookingViewSet(viewsets.ModelViewSet):
 
         total_customers = 0
 
+        # Fetch the Trip instance using the trip ID
+        try:
+            trip = Trip.objects.get(id=booking.trip.id)  # Adjust if `booking.trip` is not an ID
+        except Trip.DoesNotExist:
+            return Response(
+                {"detail": "Trip not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         # Determine if scuba is included
         settings = Settings.load()
-        trip = booking.trip
         days_until_trip = (trip.start_date - date.today()).days
         if days_until_trip >= settings.scuba_limit_days:
             booking.scuba_included = True
