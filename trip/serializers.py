@@ -7,6 +7,7 @@ from datetime import date, timedelta
 class TripPackageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Package
+        fields = "__all__" 
 
 class TripOverviewSerializer(serializers.ModelSerializer):
     is_scuba_free = serializers.SerializerMethodField()
