@@ -71,7 +71,7 @@ class PaymentViewset(viewsets.ModelViewSet):
                             {"error": f"Meal option with id {meal_option_id} not found."},
                             status=status.HTTP_404_NOT_FOUND,
                         )
-        elif(payment_type == "full"):
+        elif(payment_type == "advance"):
             for pax_record in pax_records:
                 total_cost = pax_record.pax * 1000
         else:
