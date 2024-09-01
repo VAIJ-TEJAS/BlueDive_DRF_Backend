@@ -1,8 +1,6 @@
 from django.db import transaction
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from datetime import date
-from settings.models import Settings
 
 from .models import Booking, PaxRecord, CustomerDetail, Payment
 from .serializers import BookingOverviewSerializer, BookingSerializer
@@ -53,16 +51,6 @@ class BookingViewSet(viewsets.ModelViewSet):
 
         # Update available seats in the associated Trip
         trip = booking.trip
-
-        # Determine if scuba is included
-        settings = Settings.load()
-        days_until_trip = (trip.start_date - date.today()).days
-        if days_until_trip >= settings.scuba_limit_days:
-            booking.scuba_included = True
-        else:
-            booking.scuba_included = False
-        booking.save()
-
         if trip.available_seats < total_customers:
             return Response(
                 {"detail": "Not enough available seats."},
