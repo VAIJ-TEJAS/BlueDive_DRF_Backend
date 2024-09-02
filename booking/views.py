@@ -28,11 +28,19 @@ class BookingViewSet(viewsets.ModelViewSet):
         # Extract related data from the request
         pax_records_data = booking_data.pop("pax_records", [])
         payments_data = booking_data.pop("payments", [])
+        payment_type = request.data.get("payment_type")
+
 
         # Create the Booking object
         booking_serializer = self.get_serializer(data=booking_data)
         booking_serializer.is_valid(raise_exception=True)
         booking = booking_serializer.save()
+
+        if(payment_type == "full"):
+            booking_data['status'] = 'Confirmed'
+
+        booking.status = "Confirmed"
+        booking.save()
 
         total_customers = 0
 
