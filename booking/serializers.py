@@ -26,7 +26,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
-    trip = TripOverviewSerializer(read_only=True)
+    trip = serializers.PrimaryKeyRelatedField(queryset=Trip.objects.all())
     pax_records = PaxRecordSerializer(many=True, read_only=True)
     customer_details = CustomerDetailSerializer(many=True, read_only=True)
     payments = PaymentSerializer(many=True, read_only=True)
@@ -34,6 +34,12 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # Replace the trip ID with the trip object
+        representation['trip'] = TripOverviewSerializer(instance.trip).data
+        return representation
 
 
 class BookingOverviewSerializer(serializers.ModelSerializer):
