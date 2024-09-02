@@ -113,3 +113,58 @@ class BookingPaymentViewset(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK,
         )
+
+class BalancePaymentViewset(viewsets.ViewSet):
+
+    def create(self, request, *args, **kwargs):
+        booking_id = request.data.get("booking_id")
+
+        if not booking_id:
+            return Response(
+                {"error": "Booking ID is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Fetch the booking object
+        try:
+            booking = Booking.objects.get(id=booking_id)
+        except Booking.DoesNotExist:
+            return Response(
+                {"error": "Booking not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Calculate the balance amount (in this case, it is assumed to be stored in the booking)
+        balance_amount = booking.balance_amount
+
+        if balance_amount <= 0:
+            return Response(
+                {"error": "No balance amount available for this booking."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Create an order with Razorpay
+        order_currency = "INR"
+        order_receipt = f"receipt_{int(time.time())}"
+        notes = {"booking_id": booking_id}
+
+        razorpay_order = client.order.create(
+            dict(
+                amount=int(balance_amount * 100),  # amount in paise
+                currency=order_currency,
+                receipt=order_receipt,
+                notes=notes,
+            )
+        )
+
+        # Return the Razorpay order ID and other details
+        return Response(
+            {
+                "order_id": razorpay_order["id"],
+                "razorpay_key_id": os.getenv("KEY_ID"),
+                "amount": balance_amount * 100,  # returning amount in paise
+                "currency": order_currency,
+                "booking_id": booking_id,
+            },
+            status=status.HTTP_200_OK,
+        )
