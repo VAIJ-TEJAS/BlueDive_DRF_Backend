@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from datetime import date
 from settings.models import Settings
-
+from rest_framework.decorators import action
 from .models import Booking, PaxRecord, CustomerDetail, Payment
 from .serializers import BookingOverviewSerializer, BookingSerializer
 
@@ -77,3 +77,42 @@ class BookingViewSet(viewsets.ModelViewSet):
         return Response(
             booking_serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+    
+    @transaction.atomic
+    @action(detail=True, methods=['post'], url_path='confirm')
+    def confirm_booking(self, request, pk=None):
+        booking = self.get_object()
+
+        # Check if the booking is already confirmed
+        if booking.status == "Confirmed":
+            return Response(
+                {"detail": "Booking is already confirmed."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Confirm the payment using provided payment details
+        payment_data = request.data.get("payment", {})
+        if not payment_data:
+            return Response(
+                {"detail": "Payment data is required to confirm booking."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Create a new payment record
+        Payment.objects.create(
+            booking=booking,
+            payment_id=payment_data.get("payment_id"),
+            order_id=payment_data.get("order_id"),
+            signature=payment_data.get("signature"),
+            amount=payment_data.get("amount"),
+            payment_method=payment_data.get("payment_method", "Razorpay")
+        )
+
+        # Update the booking status and balance amount
+        booking.status = "Confirmed"
+        booking.balance_amount = 0
+        booking.save()
+
+        # Serialize and return the updated booking
+        serializer = self.get_serializer(booking)
+        return Response(serializer.data, status=status.HTTP_200_OK)
