@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from package import views as package_views
 from trip import views as trip_views  
+from contactus import views as contactus_views 
 from booking import views as booking_views 
 from payment import views as payment_views
 from user import views as user_views 
@@ -18,6 +19,7 @@ router.register(r'bookings', booking_views.BookingViewSet,  basename='bookings')
 router.register(r'payments', payment_views.BookingPaymentViewset, basename='payments')
 router.register(r'balance-payments', payment_views.BalancePaymentViewset, basename='balance-payments')
 router.register(r'user', user_views.UserViewSet, basename='user')
+router.register(r'contact-messages', contactus_views.ContactMessageViewSet, basename='contact-messages')
 
 
 urlpatterns = [
