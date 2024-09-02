@@ -16,6 +16,7 @@ router.register(r'packages', package_views.PackageViewSet,  basename='packages')
 router.register(r'trips', trip_views.TripViewSet,  basename='trips')
 router.register(r'bookings', booking_views.BookingViewSet,  basename='bookings')  
 router.register(r'payments', payment_views.BookingPaymentViewset, basename='payments')
+router.register(r'balance-payments', payment_views.BalancePaymentViewset, basename='balance-payments')
 router.register(r'user', user_views.UserViewSet, basename='user')
 
 
