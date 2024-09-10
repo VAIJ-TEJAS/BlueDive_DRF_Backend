@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
 from booking.models import Booking
 from booking.serializers import BookingSerializer
 from package.models import MealRecords
@@ -16,6 +17,16 @@ from trip.serializers import TripOverviewSerializer
 # client = razorpay.Client(auth=("rzp_test_RX98n2GyvgDl78", "mFUsAztsl4YJ2L7OAQJjni20"))
 client = razorpay.Client(auth=(os.getenv("KEY_ID"), os.getenv("KEY_SECRET")))
 
+class PaymentWebhookViewSet(viewsets.ViewSet):
+    permission_classes = [AllowAny]
+
+    @action(detail=False, methods=["post"], url_path="payment-success")
+    def payment_successful_webhook(self, request, *args, **kwargs):
+        # Print the incoming payload for debugging (remove in production)
+        print(request.data)
+
+        # Respond with a simple acknowledgment
+        return Response({"status": "received"}, status=status.HTTP_200_OK)
 
 class BookingPaymentViewset(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
