@@ -10,6 +10,10 @@ import razorpay
 import time
 import os
 
+import hmac
+import hashlib
+import json
+
 from settings.models import Settings
 from trip.models import Trip
 from trip.serializers import TripOverviewSerializer
@@ -22,10 +26,34 @@ class PaymentWebhookViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["post"], url_path="payment-success")
     def payment_successful_webhook(self, request, *args, **kwargs):
-        # Print the incoming payload for debugging (remove in production)
-        print(request.data)
+        # Step 1: Print Headers, Query Params, and Payload for Debugging
+        print("Headers:", request.headers)
+        print("Query Params:", request.query_params)
+        print("Payload:", request.data)
 
-        # Respond with a simple acknowledgment
+        # Step 2: Get the Signature from the Header (replace with actual header name if different)
+        signature = request.headers.get("X-Razorpay-Signature")
+        if not signature:
+            return Response({"error": "Signature missing"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Step 3: Verify the signature using the secret
+        webhook_secret = os.getenv("WEBHOOK_SECRET") 
+        payload = json.dumps(request.data, separators=(',', ':'))  # Convert payload to JSON string
+        expected_signature = hmac.new(
+            webhook_secret.encode('utf-8'),
+            payload.encode('utf-8'),
+            hashlib.sha256
+        ).hexdigest()
+
+        # Step 4: Compare the computed signature with the one from the header
+        if hmac.compare_digest(expected_signature, signature):
+            # If valid, process the webhook event
+            print("Signature Verified!")
+        else:
+            # If invalid, reject the request
+            return Response({"error": "Invalid signature"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Step 5: Respond with a simple acknowledgment
         return Response({"status": "received"}, status=status.HTTP_200_OK)
 
 class BookingPaymentViewset(viewsets.ModelViewSet):
