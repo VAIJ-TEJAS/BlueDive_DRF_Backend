@@ -74,7 +74,7 @@ class BookingViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        trip.available_seats -= total_customers
+        trip.available_seats -= total_rooms * 4
         trip.available_rooms -= total_rooms
         trip.save()
 
