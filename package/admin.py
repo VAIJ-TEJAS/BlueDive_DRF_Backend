@@ -59,11 +59,11 @@ class OptionAdmin(admin.ModelAdmin):
     list_filter = ('event',)
     search_fields = ('name', 'event__name')
 
-class MealFoodRecordInline(nested_admin.NestedTabularInline):
+class MealFoodRecordInline(admin.TabularInline):
     model = MealFoodRecord
     extra = 1  
 
-class FoodRecordInline(nested_admin.NestedTabularInline):
+class FoodRecordInline(admin.TabularInline):
     model = FoodRecord
     extra = 1
     inlines = [MealFoodRecordInline] 
