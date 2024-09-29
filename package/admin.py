@@ -61,19 +61,16 @@ class OptionAdmin(admin.ModelAdmin):
 
 class MealFoodRecordInline(nested_admin.NestedTabularInline):
     model = MealFoodRecord
-    extra = 1  # Number of empty forms to display
-    fields = ('food_options',)  # Display food options
-    autocomplete_fields = ('food_options',)  # Enables autocomplete for food options
+    extra = 1  
 
 class FoodRecordInline(nested_admin.NestedTabularInline):
     model = FoodRecord
-    extra = 1  # Number of empty forms to display
-    inlines = [MealFoodRecordInline]  # Nested inline for MealFoodRecord
-    fields = ('meal',)  # Display the meal field; adjust as necessary
+    extra = 1
+    inlines = [MealFoodRecordInline] 
 
 class DayAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
-    inlines = [EventRecordInline, FoodRecordInline]  # Add FoodRecordInline here
+    inlines = [EventRecordInline, FoodRecordInline]  
 
 class EventRecordAdmin(admin.ModelAdmin):
     list_display = ('event', 'day')
