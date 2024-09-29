@@ -34,9 +34,13 @@ class OptionInline(admin.TabularInline):
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("name", "standard_option", "description")
+    list_display = ('get_package_name', "name", "standard_option", "description")
     search_fields = ("name", "description")
     inlines = [OptionInline]
+
+    def get_package_name(self, obj):
+        return obj.package.name
+    get_package_name.short_description = 'Package'
 
 
 class DayRecordInline(nested_admin.NestedTabularInline):
