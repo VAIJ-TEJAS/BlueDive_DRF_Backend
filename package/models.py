@@ -142,14 +142,9 @@ class FoodRecord(models.Model):
         return f"FoodRecord {self.name} for Day {self.day.name}"
 
 class MealFoodRecord(models.Model):
-    MEAL_TYPE_CHOICES = [
-        ('lunch', 'Lunch'),
-        ('dinner', 'Dinner'),
-    ]
-    
     food_record = models.ForeignKey(FoodRecord, on_delete=models.CASCADE, related_name='meal_food_records')
     food_options = models.ManyToManyField(FoodOption, related_name='meal_food_records')
-    meal_type = models.CharField(max_length=6, choices=MEAL_TYPE_CHOICES)
+    meal_type = models.CharField(max_length=10, choices=[('lunch', 'Lunch'), ('dinner', 'Dinner')])
 
     def __str__(self):
-        return f"MealFoodRecord ({self.get_meal_type_display()}) with {self.food_options.count()} options"
+        return f"MealFoodRecord with {self.food_options.count()} options"

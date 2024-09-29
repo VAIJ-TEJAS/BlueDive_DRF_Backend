@@ -61,7 +61,9 @@ class OptionAdmin(admin.ModelAdmin):
 
 class MealFoodRecordInline(nested_admin.NestedTabularInline):
     model = MealFoodRecord
-    extra = 1  
+    extra = 1
+    fields = ('meal_type', 'food_options')  # Display the meal type and food options
+    autocomplete_fields = ('food_options',)  # Enables searching for food options
 
 class FoodRecordInline(nested_admin.NestedTabularInline):
     model = FoodRecord
