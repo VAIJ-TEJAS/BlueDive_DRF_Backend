@@ -39,6 +39,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         booking = booking_serializer.save()
 
         total_customers = 0
+        total_rooms = len(pax_records_data)
 
         # Create the associated PaxRecords and CustomerDetails
         for pax_record_data in pax_records_data:
@@ -74,6 +75,7 @@ class BookingViewSet(viewsets.ModelViewSet):
             )
 
         trip.available_seats -= total_customers
+        trip.available_rooms -= total_rooms
         trip.save()
 
         # Return the full booking with its relationships
