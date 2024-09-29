@@ -72,7 +72,7 @@ class FoodRecordInline(nested_admin.NestedTabularInline):
 
 class DayAdmin(nested_admin.NestedModelAdmin):
     list_display = ('name', 'description')
-    inlines = [EventRecordInline]  
+    inlines = [EventRecordInline, FoodRecordInline]  
 
 class EventRecordAdmin(admin.ModelAdmin):
     list_display = ('event', 'day')
