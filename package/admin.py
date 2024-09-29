@@ -23,7 +23,7 @@ class DayRecordInline(nested_admin.NestedTabularInline):
     model = DayRecord
     extra = 1
 
-class EventRecordInline(admin.TabularInline):
+class EventRecordInline(nested_admin.NestedTabularInline):
     model = EventRecord
     extra = 1
 
