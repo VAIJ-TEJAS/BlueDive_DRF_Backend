@@ -127,3 +127,9 @@ class PackageImages(models.Model):
 
     def __str__(self):
         return f"Image for Package {self.package.name}"
+    
+class FoodOption(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name

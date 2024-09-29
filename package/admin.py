@@ -1,10 +1,14 @@
 from django.contrib import admin
 from .models import (
-    Meal, MealRecords, Option, Event, Day, EventRecord, 
+    FoodOption, Meal, MealRecords, Option, Event, Day, EventRecord, 
     DayRecord, Package, PackageImages, PaxOptions, PickupPoint, Vehicle, VehicleImage, 
     Accommodation, AccommodationImage, WaterSportOption
 )
 import nested_admin
+
+class FoodOptionAdmin(admin.ModelAdmin):
+    list_display = ('name',)  # Display the name in the list view
+    search_fields = ('name',)  # Allow search by name
 
 class OptionInline(admin.TabularInline):
     model = Option
@@ -104,3 +108,4 @@ admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(Accommodation, AccommodationAdmin)
 admin.site.register(PickupPoint, PickupPointAdmin)
 admin.site.register(WaterSportOption, WaterSportOptionAdmin)
+admin.site.register(FoodOption, FoodOptionAdmin)

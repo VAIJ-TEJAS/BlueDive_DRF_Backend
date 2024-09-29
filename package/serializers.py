@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from trip.serializers import TripOverviewSerializer
 from .models import (
-    Option, Event, Day, EventRecord, DayRecord, Package,
+    FoodOption, Option, Event, Day, EventRecord, DayRecord, Package,
     Meal, PackageImages, PaxOptions, MealRecords, PickupPoint, Vehicle, VehicleImage,
     Accommodation, AccommodationImage, WaterSportOption
 )
@@ -146,3 +146,8 @@ class PackageTripsSerializer(serializers.ModelSerializer):
         meal_ids = MealRecords.objects.filter(pax_option__package=obj).values_list('meal_id', flat=True).distinct()
         meals = Meal.objects.filter(id__in=meal_ids)
         return MealSerializer(meals, many=True).data
+    
+class FoodOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodOption
+        fields = '__all__'
