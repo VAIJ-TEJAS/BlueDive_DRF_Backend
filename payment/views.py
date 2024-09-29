@@ -113,7 +113,7 @@ class BookingPaymentViewset(viewsets.ModelViewSet):
                     )
       
         for pax_record in pax_records:
-            advance_cost += pax_record.get('pax') * 1000
+            advance_cost += pax_record.get('pax') * 2500
         
 
         # Return the calculated amount in paise (for Razorpay)
