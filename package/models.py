@@ -65,7 +65,7 @@ class Event(models.Model):
     package = models.ForeignKey(Package, on_delete=models.CASCADE, related_name='events', null=True, blank=True)
 
     def __str__(self):
-        return f"Standard Option: {self.standard_option if self.standard_option else 'None'} - {self.name} in Package {self.package.code if self.package else 'No Package Code'}"
+        return f"{self.package.name if self.package else 'None'} - {self.name}"
 
 class Option(models.Model):
     name = models.CharField(max_length=200)
