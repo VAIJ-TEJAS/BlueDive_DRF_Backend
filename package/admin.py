@@ -66,7 +66,7 @@ class MealFoodRecordInline(nested_admin.NestedTabularInline):
 class FoodRecordInline(nested_admin.NestedTabularInline):
     model = FoodRecord
     extra = 1
-    inlines = [MealFoodRecord]
+    inlines = [MealFoodRecordInline]
 
 class DayAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
