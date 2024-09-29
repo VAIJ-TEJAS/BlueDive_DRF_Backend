@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    FoodOption, FoodRecord, Meal, MealRecords, Option, Event, Day, EventRecord, 
+    FoodOption, FoodRecord, Meal, MealFoodRecord, MealRecords, Option, Event, Day, EventRecord, 
     DayRecord, Package, PackageImages, PaxOptions, PickupPoint, Vehicle, VehicleImage, 
     Accommodation, AccommodationImage, WaterSportOption
 )
@@ -59,9 +59,14 @@ class OptionAdmin(admin.ModelAdmin):
     list_filter = ('event',)
     search_fields = ('name', 'event__name')
 
+class MealFoodRecordInline(nested_admin.NestedTabularInline):
+    model = MealFoodRecord
+    extra = 1  
+
 class FoodRecordInline(admin.TabularInline):
     model = FoodRecord
     extra = 1
+    inlines = [MealFoodRecord]
 
 class DayAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
