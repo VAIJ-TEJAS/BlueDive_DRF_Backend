@@ -139,7 +139,7 @@ class FoodRecord(models.Model):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name='food_records')
 
     def __str__(self):
-        return f"FoodRecord {self.name} for Day {self.day.name}"
+        return f"FoodRecord for Day {self.day.name}"
 
 class MealFoodRecord(models.Model):
     food_record = models.ForeignKey(FoodRecord, on_delete=models.CASCADE, related_name='meal_food_records')
