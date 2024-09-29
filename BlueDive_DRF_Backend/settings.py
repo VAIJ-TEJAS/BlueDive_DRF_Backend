@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "nested_admin",
 
     "booking",
+    "businesspartners",
     "contactus",
     "package",
     "payment",

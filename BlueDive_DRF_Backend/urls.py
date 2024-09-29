@@ -9,6 +9,7 @@ from contactus import views as contactus_views
 from booking import views as booking_views 
 from payment import views as payment_views
 from user import views as user_views 
+from businesspartners import views as businesspartners_views
 
 router = DefaultRouter()
 router.register(r'packages-overview', package_views.PackageOverviewViewSet, basename='packages-overview')
@@ -21,7 +22,7 @@ router.register(r'balance-payments', payment_views.BalancePaymentViewset, basena
 router.register(r'webhook', payment_views.PaymentWebhookViewSet, basename='payment-webhook')
 router.register(r'user', user_views.UserViewSet, basename='user')
 router.register(r'contact-messages', contactus_views.ContactMessageViewSet, basename='contact-messages')
-
+router.register(r'profiles', businesspartners_views.BusinessPartnerProfileViewSet, basename='profiles') 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
