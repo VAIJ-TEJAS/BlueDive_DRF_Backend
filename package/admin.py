@@ -63,7 +63,7 @@ class MealFoodRecordInline(nested_admin.NestedTabularInline):
     model = MealFoodRecord
     extra = 1  
 
-class FoodRecordInline(admin.TabularInline):
+class FoodRecordInline(nested_admin.NestedTabularInline):
     model = FoodRecord
     extra = 1
     inlines = [MealFoodRecord]
