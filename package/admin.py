@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    FoodOption, Meal, MealRecords, Option, Event, Day, EventRecord, 
+    FoodOption, FoodRecord, Meal, MealFoodRecord, MealRecords, Option, Event, Day, EventRecord, 
     DayRecord, Package, PackageImages, PaxOptions, PickupPoint, Vehicle, VehicleImage, 
     Accommodation, AccommodationImage, WaterSportOption
 )
@@ -59,9 +59,21 @@ class OptionAdmin(admin.ModelAdmin):
     list_filter = ('event',)
     search_fields = ('name', 'event__name')
 
+class MealFoodRecordInline(nested_admin.NestedTabularInline):
+    model = MealFoodRecord
+    extra = 1  # Number of empty forms to display
+    fields = ('food_options',)  # Display food options
+    autocomplete_fields = ('food_options',)  # Enables autocomplete for food options
+
+class FoodRecordInline(nested_admin.NestedTabularInline):
+    model = FoodRecord
+    extra = 1  # Number of empty forms to display
+    inlines = [MealFoodRecordInline]  # Nested inline for MealFoodRecord
+    fields = ('meal',)  # Display the meal field; adjust as necessary
+
 class DayAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
-    inlines = [EventRecordInline]  
+    inlines = [EventRecordInline, FoodRecordInline]  # Add FoodRecordInline here
 
 class EventRecordAdmin(admin.ModelAdmin):
     list_display = ('event', 'day')
