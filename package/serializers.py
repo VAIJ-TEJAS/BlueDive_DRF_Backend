@@ -60,7 +60,6 @@ class FoodOptionSerializer(serializers.ModelSerializer):
 
 
 class MealFoodRecordSerializer(serializers.ModelSerializer):
-    food_record = serializers.StringRelatedField(read_only=True)  
     food_options = FoodOptionSerializer(many=True, read_only=True)
 
     class Meta:
