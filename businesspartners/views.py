@@ -15,4 +15,7 @@ class BusinessPartnerProfileViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=partner_data)
         serializer.is_valid(raise_exception=True)
 
+        # Save the new BusinessPartnerProfile
+        partner_profile = serializer.save()
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
