@@ -68,17 +68,14 @@ class FoodOptionSerializer(serializers.ModelSerializer):
 
 
 class MealFoodRecordSerializer(serializers.ModelSerializer):
-    food_record = FoodRecordSerializer()
-    food_options = FoodOptionSerializer(many=True, read_only=True)
-
     class Meta:
-        model = MealFoodRecord
+        model = FoodRecord
         fields = "__all__"
 
 
 class DaySerializer(serializers.ModelSerializer):
     event_records = EventRecordSerializer(many=True, read_only=True)
-    meal_food_records = MealFoodRecordSerializer(many=True, read_only=True)
+    meal_food_records = FoodRecordSerializer(many=True, read_only=True)
 
     class Meta:
         model = Day
