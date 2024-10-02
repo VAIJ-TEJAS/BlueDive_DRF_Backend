@@ -9,8 +9,10 @@ class BusinessPartnerProfileViewSet(viewsets.ModelViewSet):
     serializer_class = BusinessPartnerProfileSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        partner_data = request.data.copy() 
+        partner_data["user"] = request.user.id 
+
+        serializer = self.get_serializer(data=partner_data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

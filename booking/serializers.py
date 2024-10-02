@@ -37,7 +37,6 @@ class BookingSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        # Replace the trip ID with the trip object
         representation['trip'] = TripOverviewSerializer(instance.trip).data
         return representation
 
