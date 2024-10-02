@@ -53,14 +53,6 @@ class EventRecordSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class FoodRecordSerializer(serializers.ModelSerializer):
-    meal = MealSerializer()
-
-    class Meta:
-        model = FoodRecord
-        fields = "__all__"
-
-
 class FoodOptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodOption
@@ -68,14 +60,23 @@ class FoodOptionSerializer(serializers.ModelSerializer):
 
 
 class MealFoodRecordSerializer(serializers.ModelSerializer):
+    food_record = serializers.StringRelatedField(read_only=True)  
+    food_options = FoodOptionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = MealFoodRecord
+        fields = "__all__"
+
+class FoodRecordSerializer(serializers.ModelSerializer):
+    meal_food_records = MealFoodRecordSerializer(many=True, read_only=True)
+
     class Meta:
         model = FoodRecord
         fields = "__all__"
 
-
 class DaySerializer(serializers.ModelSerializer):
     event_records = EventRecordSerializer(many=True, read_only=True)
-    meal_food_records = FoodRecordSerializer(many=True, read_only=True)
+    food_records = FoodRecordSerializer(many=True, read_only=True)
 
     class Meta:
         model = Day
