@@ -48,6 +48,12 @@ class BookingViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if trip_obj.available_rooms < total_rooms:
+            return Response(
+                {"detail": "Not enough available rooms."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Create the Booking object
         booking_serializer = self.get_serializer(data=booking_data)
         booking_serializer.is_valid(raise_exception=True)

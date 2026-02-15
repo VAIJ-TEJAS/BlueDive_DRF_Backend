@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 from trip.models import Trip
 from trip.serializers import TripOverviewSerializer
 
-# client = razorpay.Client(auth=("rzp_test_RX98n2GyvgDl78", "mFUsAztsl4YJ2L7OAQJjni20"))
 client = razorpay.Client(auth=(os.getenv("KEY_ID"), os.getenv("KEY_SECRET")))
 
 class PaymentWebhookViewSet(viewsets.ViewSet):
@@ -118,7 +117,8 @@ class BookingPaymentViewset(viewsets.ModelViewSet):
                     )
       
         for pax_record in pax_records:
-            advance_cost += pax_record.get('pax') * 2500
+            pax_count = pax_record.get('pax') or 0
+            advance_cost += pax_count * 2500
         
 
         # Return the calculated amount in paise (for Razorpay)
