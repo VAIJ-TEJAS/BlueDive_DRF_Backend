@@ -33,20 +33,31 @@ class BookingViewSet(viewsets.ModelViewSet):
         if(payment_type == "full"):
             booking_data['status'] = 'Confirmed'
 
+        # Count customers and rooms before creating anything
+        total_customers = 0
+        total_rooms = len(pax_records_data)
+        for pax_record_data in pax_records_data:
+            total_customers += len(pax_record_data.get("customer_details", []))
+
+        # Check seat availability before creating the booking
+        from trip.models import Trip as TripModel
+        trip_obj = TripModel.objects.get(id=booking_data.get("trip"))
+        if trip_obj.available_seats < total_customers:
+            return Response(
+                {"detail": "Not enough available seats."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Create the Booking object
         booking_serializer = self.get_serializer(data=booking_data)
         booking_serializer.is_valid(raise_exception=True)
         booking = booking_serializer.save()
-
-        total_customers = 0
-        total_rooms = len(pax_records_data)
 
         # Create the associated PaxRecords and CustomerDetails
         for pax_record_data in pax_records_data:
             customer_details_data = pax_record_data.pop("customer_details", [])
             pax_record = PaxRecord.objects.create(booking=booking, **pax_record_data)
 
-            total_customers += len(customer_details_data)
             for customer_detail_data in customer_details_data:
                 CustomerDetail.objects.create(
                     pax_record=pax_record, **customer_detail_data
@@ -67,12 +78,6 @@ class BookingViewSet(viewsets.ModelViewSet):
         else:
             booking.scuba_included = False
         booking.save()
-        
-        if trip.available_seats < total_customers:
-            return Response(
-                {"detail": "Not enough available seats."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         trip.available_seats -= total_rooms * 4
         trip.available_rooms -= total_rooms
