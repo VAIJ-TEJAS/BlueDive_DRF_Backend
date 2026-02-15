@@ -13,8 +13,11 @@ import os
 import hmac
 import hashlib
 import json
+import logging
 
 from settings.models import Settings
+
+logger = logging.getLogger(__name__)
 from trip.models import Trip
 from trip.serializers import TripOverviewSerializer
 
@@ -26,10 +29,9 @@ class PaymentWebhookViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["post"], url_path="payment-success")
     def payment_successful_webhook(self, request, *args, **kwargs):
-        # Step 1: Print Headers, Query Params, and Payload for Debugging
-        print("Headers:", request.headers)
-        print("Query Params:", request.query_params)
-        print("Payload:", request.data)
+        # Step 1: Log request details for debugging
+        logger.debug("Webhook headers: %s", request.headers)
+        logger.debug("Webhook payload: %s", request.data)
 
         # Step 2: Get the Signature from the Header (replace with actual header name if different)
         signature = request.headers.get("X-Razorpay-Signature")
@@ -37,7 +39,10 @@ class PaymentWebhookViewSet(viewsets.ViewSet):
             return Response({"error": "Signature missing"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Step 3: Verify the signature using the secret
-        webhook_secret = os.getenv("WEBHOOK_SECRET") 
+        webhook_secret = os.getenv("WEBHOOK_SECRET")
+        if not webhook_secret:
+            logger.error("WEBHOOK_SECRET environment variable is not set")
+            return Response({"error": "Server configuration error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         payload = json.dumps(request.data, separators=(',', ':'))  # Convert payload to JSON string
         expected_signature = hmac.new(
             webhook_secret.encode('utf-8'),
@@ -48,7 +53,7 @@ class PaymentWebhookViewSet(viewsets.ViewSet):
         # Step 4: Compare the computed signature with the one from the header
         if hmac.compare_digest(expected_signature, signature):
             # If valid, process the webhook event
-            print("Signature Verified!")
+            logger.info("Webhook signature verified successfully")
         else:
             # If invalid, reject the request
             return Response({"error": "Invalid signature"}, status=status.HTTP_400_BAD_REQUEST)
