@@ -101,6 +101,12 @@ class BookingPaymentViewset(viewsets.ModelViewSet):
             for customer_detail in pax_record.get("customer_details", []):
                 meal_option_id = customer_detail.get("meal_option_id")
 
+                if not meal_option_id:
+                    return Response(
+                        {"error": "Meal option ID is required for each customer."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
                 try:
                     meal_record = MealRecords.objects.get(id=meal_option_id)
 
@@ -179,7 +185,7 @@ class BalancePaymentViewset(viewsets.ViewSet):
             )
 
         # Calculate the balance amount (in this case, it is assumed to be stored in the booking)
-        balance_amount = booking.balance_amount
+        balance_amount = booking.balance_amount or 0
 
         if balance_amount <= 0:
             return Response(

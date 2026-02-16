@@ -39,10 +39,20 @@ def get_display_name(user):
     """Get a display name for a user, falling back to username."""
     if not user:
         return 'Unknown'
-    full_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
-    if full_name:
-        return full_name
-    return user.get('username', 'Unknown')
+    
+    # Handle both dict-like objects and Django user objects
+    if hasattr(user, 'get'):
+        # Dict-like object
+        full_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
+        if full_name:
+            return full_name
+        return user.get('username', 'Unknown')
+    else:
+        # Django user object
+        full_name = f"{getattr(user, 'first_name', '')} {getattr(user, 'last_name', '')}".strip()
+        if full_name:
+            return full_name
+        return getattr(user, 'username', 'Unknown')
 
 
 def validate_otp(otp):

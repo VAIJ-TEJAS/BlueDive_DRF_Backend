@@ -14,6 +14,9 @@ def get_package_display_price(display_price, display_discount_percentage):
         return 0
     if not display_discount_percentage or display_discount_percentage <= 0:
         return display_price
+    # Ensure discount percentage is reasonable (not over 100%)
+    if display_discount_percentage > 100:
+        return 0
     discount = Decimal(str(display_price)) * Decimal(str(display_discount_percentage)) / 100
     return int(Decimal(str(display_price)) - discount)
 

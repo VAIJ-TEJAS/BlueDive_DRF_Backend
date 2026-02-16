@@ -37,7 +37,11 @@ def format_date_range(start_date, end_date):
     """Format a date range as a readable string."""
     if not start_date or not end_date:
         return ''
-    return f"{start_date.strftime('%d %b')} - {end_date.strftime('%d %b %Y')}"
+    try:
+        return f"{start_date.strftime('%d %b')} - {end_date.strftime('%d %b %Y')}"
+    except AttributeError:
+        # Handle cases where dates might not be date objects
+        return str(start_date) + ' - ' + str(end_date)
 
 
 def get_trip_duration_days(start_date, end_date):
