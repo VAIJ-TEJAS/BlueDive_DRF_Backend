@@ -19,9 +19,13 @@ def is_valid_email(email: str) -> bool:
     if not email or not isinstance(email, str):
         return False
     
+    email = email.strip()
+    if not email:
+        return False
+    
     # Basic email pattern - more comprehensive than Django's default
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return bool(re.match(pattern, email.strip()))
+    return bool(re.match(pattern, email))
 
 
 def is_valid_phone_number(phone: str, country_code: str = 'IN') -> bool:
@@ -106,7 +110,11 @@ def validate_amount(amount: float) -> bool:
     
     try:
         amount_float = float(amount)
-        return amount_float > 0 and amount_float <= 999999.99
+        # Check for NaN and infinity
+        if not (amount_float > 0 and amount_float <= 999999.99):
+            return False
+        # Ensure it's a finite number
+        return not (amount_float != amount_float or amount_float == float('inf') or amount_float == float('-inf'))
     except (ValueError, TypeError):
         return False
 
@@ -126,8 +134,11 @@ def validate_pax_count(pax: int) -> bool:
     
     try:
         pax_int = int(pax)
+        # Check for NaN and infinity
+        if pax_int != pax_int or pax_int == float('inf') or pax_int == float('-inf'):
+            return False
         return 1 <= pax_int <= 50  # Reasonable limits
-    except (ValueError, TypeError):
+    except (ValueError, TypeError, OverflowError):
         return False
 
 
