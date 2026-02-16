@@ -156,7 +156,6 @@ class WaterSportOptionSerializer(serializers.ModelSerializer):
 
 class PackageSerializer(serializers.ModelSerializer):
     day_records = DayRecordSerializer(many=True, read_only=True)
-    meals = MealSerializer(many=True, read_only=True)
     pax_options = PaxOptionsSerializer(many=True, read_only=True)
     meals = serializers.SerializerMethodField()
     default_meal_option = MealSerializer(read_only=True)
@@ -190,7 +189,6 @@ class PackageOverviewSerializer(serializers.ModelSerializer):
 class PackageTripsSerializer(serializers.ModelSerializer):
     trips = TripOverviewSerializer(many=True, read_only=True)
     day_records = DayRecordSerializer(many=True, read_only=True)
-    meals = MealSerializer(many=True, read_only=True)
     pax_options = PaxOptionsSerializer(many=True, read_only=True)
     meals = serializers.SerializerMethodField()
     default_meal_option = MealSerializer(read_only=True)
