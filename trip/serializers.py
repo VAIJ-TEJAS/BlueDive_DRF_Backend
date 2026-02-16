@@ -51,6 +51,6 @@ class TripOverviewSerializer(serializers.ModelSerializer):
     def get_advance_payment_due_date(self, obj):
         settings = Settings.load()
         days_until_trip = (obj.start_date - date.today()).days
-        if days_until_trip >= settings.balance_payment_limit_days:
+        if days_until_trip > settings.balance_payment_limit_days:
             return obj.start_date - timedelta(days=settings.balance_payment_limit_days)
         return None

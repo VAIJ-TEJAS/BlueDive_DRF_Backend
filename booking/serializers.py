@@ -9,6 +9,16 @@ class CustomerDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerDetail
         fields = "__all__"
+    
+    def validate_name(self, value):
+        if not value or not value.strip():
+            raise serializers.ValidationError("Name is required")
+        return value.strip()
+    
+    def validate_contact_number(self, value):
+        if not value or not value.strip():
+            raise serializers.ValidationError("Contact number is required")
+        return value.strip()
 
 
 class PaxRecordSerializer(serializers.ModelSerializer):
@@ -17,6 +27,11 @@ class PaxRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaxRecord
         fields = "__all__"
+    
+    def validate_pax(self, value):
+        if not value or value <= 0:
+            raise serializers.ValidationError("Pax count must be greater than 0")
+        return value
 
 
 class PaymentSerializer(serializers.ModelSerializer):
