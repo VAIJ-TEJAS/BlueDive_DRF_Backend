@@ -85,7 +85,7 @@ class BookingViewSet(viewsets.ModelViewSet):
             booking.scuba_included = False
         booking.save()
 
-        trip.available_seats -= total_rooms * 4
+        trip.available_seats -= total_customers
         trip.available_rooms -= total_rooms
         trip.save()
 
