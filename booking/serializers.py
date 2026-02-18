@@ -18,6 +18,18 @@ class CustomerDetailSerializer(serializers.ModelSerializer):
     def validate_contact_number(self, value):
         if not value or not value.strip():
             raise serializers.ValidationError("Contact number is required")
+        
+        # Remove any non-digit characters for validation
+        clean_number = ''.join(filter(str.isdigit, value.strip()))
+        
+        # Check if it's a valid Indian mobile number (10 digits)
+        if len(clean_number) != 10:
+            raise serializers.ValidationError("Contact number must be exactly 10 digits")
+        
+        # Check if it starts with valid Indian mobile prefix (6-9)
+        if not clean_number.startswith(('6', '7', '8', '9')):
+            raise serializers.ValidationError("Contact number must start with 6, 7, 8, or 9")
+        
         return value.strip()
 
 
@@ -49,6 +61,16 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = "__all__"
+    
+    def validate_amount(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Amount cannot be negative")
+        return value
+    
+    def validate_balance_amount(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Balance amount cannot be negative")
+        return value
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
