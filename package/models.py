@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, RegexValidator, MaxLengthValidator
 
 
 class Meal(models.Model):
@@ -41,15 +42,31 @@ class WaterSportOption(models.Model):
 
 
 class Package(models.Model):
-    code = models.CharField(max_length=100, null=True, blank=True)
+    code = models.CharField(max_length=100, null=True, blank=True, validators=[
+        RegexValidator(r'^[A-Z0-9-]+$', message='Package code can only contain uppercase letters, numbers, and hyphens')
+    ])
     cover_image = models.ImageField(
         upload_to="package_cover_images/", null=True, blank=True
     )
-    name = models.CharField(max_length=200)
-    duration = models.CharField(max_length=200)
-    description = models.TextField(null=True, blank=True)
-    display_price = models.IntegerField(null=True, blank=True)
-    display_discount_percentage = models.IntegerField(null=True, blank=True)
+    name = models.CharField(max_length=200, validators=[
+        MinLengthValidator(3, message='Package name must be at least 3 characters long'),
+        RegexValidator(r'^[a-zA-Z0-9\s\-]+$', message='Package name can only contain letters, numbers, spaces, and hyphens')
+    ])
+    duration = models.CharField(max_length=200, validators=[
+        MinLengthValidator(2, message='Duration must be at least 2 characters long'),
+        RegexValidator(r'^\d+\s+(days|day|hours|hour)$', message='Duration must be in format like "3 days" or "2 hours"')
+    ])
+    description = models.TextField(null=True, blank=True, validators=[
+        MaxLengthValidator(2000, message='Description cannot exceed 2000 characters')
+    ])
+    display_price = models.IntegerField(null=True, blank=True, validators=[
+        MinValueValidator(0, message='Display price cannot be negative'),
+        MaxValueValidator(999999, message='Display price cannot exceed 999,999')
+    ])
+    display_discount_percentage = models.IntegerField(null=True, blank=True, validators=[
+        MinValueValidator(0, message='Discount percentage cannot be negative'),
+        MaxValueValidator(100, message='Discount percentage cannot exceed 100')
+    ])
     accommodation = models.ForeignKey(
         Accommodation,
         on_delete=models.SET_NULL,

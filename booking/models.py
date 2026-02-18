@@ -1,12 +1,17 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, RegexValidator
 from django.contrib.auth.models import User
 from trip.models import Trip
 
 class Booking(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='bookings')
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='bookings')
-    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    balance_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, validators=[
+        MinValueValidator(0, message='Amount cannot be negative')
+    ])
+    balance_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, validators=[
+        MinValueValidator(0, message='Balance amount cannot be negative')
+    ])
     booking_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=[
         ('Partially Confirmed', 'Partially Confirmed'),
@@ -25,21 +30,41 @@ class Booking(models.Model):
 
 class PaxRecord(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='pax_records')
-    pax = models.IntegerField()
+    pax = models.IntegerField(validators=[
+        MinValueValidator(1, message='Number of passengers must be at least 1'),
+        MaxValueValidator(50, message='Number of passengers cannot exceed 50')
+    ])
 
     def __str__(self):
         return f"Pax record for booking {self.booking}"
 
 class CustomerDetail(models.Model):
     pax_record = models.ForeignKey(PaxRecord, on_delete=models.CASCADE, related_name='customer_details')
-    name = models.CharField(max_length=100)
-    contact_number = models.CharField(max_length=15)
-    pick_up_point = models.CharField(max_length=255)
-    meal_option = models.CharField(max_length=50)
-    meal_option_id = models.IntegerField(null=True, blank=True)
-    watersports_option = models.CharField(max_length=50)
-    package_cost = models.DecimalField(max_digits=10, decimal_places=2)
-    discounted_package_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    name = models.CharField(max_length=100, validators=[
+        MinLengthValidator(2, message='Name must be at least 2 characters long'),
+        RegexValidator(r'^[a-zA-Z\s]+$', message='Name can only contain letters and spaces')
+    ])
+    contact_number = models.CharField(max_length=15, validators=[
+        RegexValidator(r'^[6-9]\d{9}$', message='Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9')
+    ])
+    pick_up_point = models.CharField(max_length=255, validators=[
+        MinLengthValidator(3, message='Pick up point must be at least 3 characters long')
+    ])
+    meal_option = models.CharField(max_length=50, validators=[
+        MinLengthValidator(2, message='Meal option must be at least 2 characters long')
+    ])
+    meal_option_id = models.IntegerField(null=True, blank=True, validators=[
+        MinValueValidator(1, message='Meal option ID must be positive')
+    ])
+    watersports_option = models.CharField(max_length=50, blank=True, validators=[
+        MinLengthValidator(2, message='Watersports option must be at least 2 characters long')
+    ])
+    package_cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[
+        MinValueValidator(0, message='Package cost cannot be negative')
+    ])
+    discounted_package_cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[
+        MinValueValidator(0, message='Discounted package cost cannot be negative')
+    ])
 
     def __str__(self):
         package_name = 'Unknown Package'
