@@ -2,6 +2,9 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from booking.models import Booking
 from booking.serializers import BookingSerializer
 from package.models import MealRecords
@@ -21,44 +24,81 @@ logger = logging.getLogger(__name__)
 from trip.models import Trip
 from trip.serializers import TripOverviewSerializer
 
-client = razorpay.Client(auth=(os.getenv("KEY_ID"), os.getenv("KEY_SECRET")))
+# Initialize Razorpay client with error handling
+try:
+    client = razorpay.Client(auth=(os.getenv("KEY_ID"), os.getenv("KEY_SECRET")))
+except Exception as e:
+    logger.error(f"Failed to initialize Razorpay client: {e}")
+    client = None
 
 class PaymentWebhookViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
 
     @action(detail=False, methods=["post"], url_path="payment-success")
     def payment_successful_webhook(self, request, *args, **kwargs):
-        # Step 1: Log request details for debugging
-        logger.debug("Webhook headers: %s", request.headers)
-        logger.debug("Webhook payload: %s", request.data)
+        try:
+            # Step 1: Validate request method and content type
+            if request.method != "POST":
+                return Response({"error": "Invalid request method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            
+            # Step 2: Log request details for debugging (without sensitive data)
+            logger.info("Payment webhook received from %s", request.META.get('REMOTE_ADDR'))
+            logger.debug("Webhook headers: %s", {k: v for k, v in request.headers.items() if k.lower() not in ['authorization', 'x-razorpay-signature']})
 
-        # Step 2: Get the Signature from the Header (replace with actual header name if different)
-        signature = request.headers.get("X-Razorpay-Signature")
-        if not signature:
-            return Response({"error": "Signature missing"}, status=status.HTTP_400_BAD_REQUEST)
+            # Step 3: Validate payload structure
+            if not request.data:
+                return Response({"error": "Empty payload"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            required_fields = ['razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature']
+            for field in required_fields:
+                if field not in request.data:
+                    return Response({"error": f"Missing required field: {field}"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Step 3: Verify the signature using the secret
-        webhook_secret = os.getenv("WEBHOOK_SECRET")
-        if not webhook_secret:
-            logger.error("WEBHOOK_SECRET environment variable is not set")
-            return Response({"error": "Server configuration error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        payload = json.dumps(request.data, separators=(',', ':'))  # Convert payload to JSON string
-        expected_signature = hmac.new(
-            webhook_secret.encode('utf-8'),
-            payload.encode('utf-8'),
-            hashlib.sha256
-        ).hexdigest()
+            # Step 4: Get and validate the Signature from the Header
+            signature = request.headers.get("X-Razorpay-Signature")
+            if not signature:
+                logger.warning("Webhook signature missing from headers")
+                return Response({"error": "Signature missing"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Step 4: Compare the computed signature with the one from the header
-        if hmac.compare_digest(expected_signature, signature):
-            # If valid, process the webhook event
-            logger.info("Webhook signature verified successfully")
-        else:
-            # If invalid, reject the request
-            return Response({"error": "Invalid signature"}, status=status.HTTP_400_BAD_REQUEST)
+            # Step 5: Verify the signature using the secret
+            webhook_secret = os.getenv("WEBHOOK_SECRET")
+            if not webhook_secret:
+                logger.error("WEBHOOK_SECRET environment variable is not set")
+                return Response({"error": "Server configuration error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            if len(webhook_secret) < 32:
+                logger.error("WEBHOOK_SECRET is too short")
+                return Response({"error": "Server configuration error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # Step 5: Respond with a simple acknowledgment
-        return Response({"status": "received"}, status=status.HTTP_200_OK)
+            # Step 6: Verify signature
+            try:
+                payload = json.dumps(request.data, separators=(',', ':'))
+                expected_signature = hmac.new(
+                    webhook_secret.encode('utf-8'),
+                    payload.encode('utf-8'),
+                    hashlib.sha256
+                ).hexdigest()
+                
+                # Compare signatures securely
+                if not hmac.compare_digest(expected_signature, signature):
+                    logger.warning("Webhook signature verification failed")
+                    return Response({"error": "Invalid signature"}, status=status.HTTP_400_BAD_REQUEST)
+                    
+            except Exception as e:
+                logger.error(f"Error during signature verification: {e}")
+                return Response({"error": "Signature verification failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Step 7: Process the webhook event
+            logger.info("Processing payment webhook for order: %s", request.data.get('razorpay_order_id'))
+            
+            # Here you would typically update the booking status, send confirmation emails, etc.
+            # For now, we'll just log the successful processing
+            
+            return Response({"status": "received", "message": "Payment webhook processed successfully"}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error(f"Unexpected error in webhook processing: {e}")
+            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class BookingPaymentViewset(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
