@@ -20,6 +20,32 @@ class TripOverviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = "__all__"  # Include all original fields
+    
+    def validate_start_date(self, value):
+        if value < date.today():
+            raise serializers.ValidationError("Start date cannot be in the past")
+        return value
+    
+    def validate_end_date(self, value):
+        if value < date.today():
+            raise serializers.ValidationError("End date cannot be in the past")
+        return value
+    
+    def validate(self, data):
+        if 'start_date' in data and 'end_date' in data:
+            if data['start_date'] > data['end_date']:
+                raise serializers.ValidationError("Start date cannot be after end date")
+        return data
+    
+    def validate_available_seats(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Available seats cannot be negative")
+        return value
+    
+    def validate_available_rooms(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Available rooms cannot be negative")
+        return value
 
     def get_is_scuba_free(self, obj):
         settings = Settings.load()

@@ -169,6 +169,26 @@ class PackageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Package
         fields = "__all__"
+    
+    def validate_name(self, value):
+        if not value or not value.strip():
+            raise serializers.ValidationError("Package name is required")
+        return value.strip()
+    
+    def validate_duration(self, value):
+        if not value or not value.strip():
+            raise serializers.ValidationError("Package duration is required")
+        return value.strip()
+    
+    def validate_display_price(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Display price cannot be negative")
+        return value
+    
+    def validate_display_discount_percentage(self, value):
+        if value is not None and (value < 0 or value > 100):
+            raise serializers.ValidationError("Discount percentage must be between 0 and 100")
+        return value
 
     def get_meals(self, obj):
         meal_ids = (
