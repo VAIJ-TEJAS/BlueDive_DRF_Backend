@@ -16,7 +16,12 @@ class Booking(models.Model):
     scuba_included = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Booking by {self.user.username} for {self.trip.package.name} on {self.booking_date}"
+        user_name = self.user.username if self.user else 'Unknown User'
+        try:
+            package_name = self.trip.package.name if self.trip and self.trip.package else 'Unknown Package'
+        except:
+            package_name = 'Unknown Package'
+        return f"Booking by {user_name} for {package_name} on {self.booking_date}"
 
 class PaxRecord(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='pax_records')
@@ -37,7 +42,13 @@ class CustomerDetail(models.Model):
     discounted_package_cost = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.name} - {self.pax_record.booking.trip.package.name}"
+        package_name = 'Unknown Package'
+        try:
+            if self.pax_record and self.pax_record.booking and self.pax_record.booking.trip and self.pax_record.booking.trip.package:
+                package_name = self.pax_record.booking.trip.package.name
+        except:
+            package_name = 'Unknown Package'
+        return f"{self.name} - {package_name}"
 
 class Payment(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='payments')

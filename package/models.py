@@ -78,6 +78,13 @@ class Package(models.Model):
         blank=True,
     )
 
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.display_price and self.display_price < 0:
+            raise ValidationError('Display price cannot be negative')
+        if self.display_discount_percentage and self.display_discount_percentage < 0:
+            raise ValidationError('Display discount percentage cannot be negative')
+
     def __str__(self):
         return self.name
 
