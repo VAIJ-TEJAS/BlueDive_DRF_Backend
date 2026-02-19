@@ -26,7 +26,16 @@ router.register(r'profiles', businesspartners_views.BusinessPartnerProfileViewSe
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('booking.urls')),
+    path('api/', include('trip.urls')),
+    path('api/', include('package.urls')),
+    path('api/', include('payment.urls')),
+    path('api/', include('user.urls')),
+    path('api/', include('contactus.urls')),
+    path('api/admin/', include('businesspartners.urls')),
+    path('api/', include('settings.urls')),
+    path('api/analytics/', include('analytics.urls')),
     path("", include(router.urls)),
     path('send-otp/', user_views.SendOtpView.as_view(),name='send_otp'),
-    path('verify-otp/', user_views.VerifyOtpView.as_view(), name='verify_otp')
+    path('verify-optp/', user_views.VerifyOtpView.as_view(), name='verify_otp')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
