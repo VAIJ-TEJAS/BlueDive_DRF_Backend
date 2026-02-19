@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     "payment",
     "trip",
     "user",
-    "settings"
+    "settings",
+    "analytics"
 ]
 
 MIDDLEWARE = [
