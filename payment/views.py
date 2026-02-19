@@ -91,10 +91,38 @@ class PaymentWebhookViewSet(viewsets.ViewSet):
         # Step 7: Process the webhook event
             logger.info("Processing payment webhook for order: %s", request.data.get('razorpay_order_id'))
             
-            # Here you would typically update the booking status, send confirmation emails, etc.
-            # For now, we'll just log the successful processing
+            # Extract payment details
+            order_id = request.data.get('razorpay_order_id')
+            payment_id = request.data.get('razorpay_payment_id')
             
-            return Response({"status": "received", "message": "Payment webhook processed successfully"}, status=status.HTTP_200_OK)
+            # Find and update the booking
+            try:
+                booking = Booking.objects.filter(razorpay_order_id=order_id).first()
+                if not booking:
+                    logger.warning(f"No booking found for order_id: {order_id}")
+                    return Response({"error": "Booking not found"}, status=status.HTTP_404_NOT_FOUND)
+                
+                # Update booking status
+                booking.payment_status = 'paid'
+                booking.razorpay_payment_id = payment_id
+                booking.paid_at = timezone.now()
+                booking.save()
+                
+                logger.info(f"Successfully updated booking {booking.id} payment status to paid")
+                
+                # Send confirmation notification (would integrate with email service)
+                # TODO: Implement email notification service
+                
+                return Response({
+                    "status": "success", 
+                    "message": "Payment processed successfully",
+                    "booking_id": booking.id,
+                    "payment_id": payment_id
+                }, status=status.HTTP_200_OK)
+                
+            except Exception as booking_error:
+                logger.error(f"Error updating booking for order {order_id}: {booking_error}")
+                return Response({"error": "Failed to update booking"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
             logger.error(f"Unexpected error in webhook processing: {e}")
