@@ -68,7 +68,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    "corsheaders.middleware.CorsMiddleware"
+    "corsheaders.middleware.CorsMiddleware",
+    
+    # Enhanced security middleware
+    "security.middleware.SecurityMiddleware",
+    "security.middleware.HoneypotMiddleware", 
+    "security.middleware.RequestValidationMiddleware"
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -161,3 +166,30 @@ TWILIO_ACCOUNT_SID = 'AC35b04c7c301fafe0ab317b33d5519dd4'
 TWILIO_AUTH_TOKEN = 'f559586089a07a0fc6ea1b42fa71f68c'
 TWILIO_PHONE_NUMBER = '+19388391796'
 TWILIO_VERIFY_SERVICE_SID = 'VA75cf3447ad1a1692f82940dbe6184df1'
+
+# Security Configuration
+RATE_LIMIT_CONFIG = {
+    'default': {'requests': 100, 'window': 3600},  # 100 requests per hour
+    'api': {'requests': 1000, 'window': 3600},     # 1000 requests per hour for API
+    'auth': {'requests': 10, 'window': 900},        # 10 requests per 15 minutes for auth
+}
+
+MAX_REQUEST_SIZE = 10 * 1024 * 1024  # 10MB
+
+BLOCKED_IPS = []  # Add IPs to block here
+
+ALLOWED_IPS = []  # Add allowed IPs here (if used, only these IPs can access)
+
+ENABLE_SECURITY_HEADERS = True
+
+ENABLE_REQUEST_LOGGING = True
+
+HONEYPOT_URLS = [
+    '/admin/login',
+    '/wp-admin/',
+    '/phpmyadmin/',
+    '/.env',
+    '/config.php',
+    '/backup.sql',
+    '/robots.txt'
+]
